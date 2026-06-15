@@ -895,6 +895,6 @@ Tahun Akademik 2026
 
 # 📜 Lisensi
 
-Proyek ini dikembangkan untuk keperluan akademik sebagai bagian dari mata kuliah Artificial Intelligence di Telkom University.
+Proyek ini dikembangkan untuk keperluan akademik sebagai bagian dari Proyek IMV di Telkom University.
 
 © 2026 SmartWaste AI Team
