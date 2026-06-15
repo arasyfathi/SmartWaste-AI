@@ -973,19 +973,19 @@ Dengan tambahan ini, SmartWaste AI mampu melakukan identifikasi sampah baik dari
 
 **Fathi Arasy**
 
-Machine Learning Engineer
+WEB
 
 ---
 
 **Adelia Afriliani**
 
-Frontend & Documentation
+UI/UX
 
 ---
 
 **Ghalib Hafuza**
 
-Backend Developer
+MODEL
 
 ---
 
