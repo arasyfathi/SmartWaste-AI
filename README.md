@@ -322,7 +322,7 @@ SmartWaste AI Website
 
 ---
 
-# 📁 Project Structure
+# 📁 Struktur Proyek
 
 ```text
 SMARTWASTE_AI
