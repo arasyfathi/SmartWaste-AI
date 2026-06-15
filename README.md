@@ -18,25 +18,24 @@ Dikembangkan oleh Mahasiswa Telkom University
 
 # 📑 Daftar Isi
 
-* 📖 Gambaran Umum
-* 🌍 Latar Belakang
-* 🚀 Status Proyek
-* ✨ Fitur Utama
-* 🧠 Model Artificial Intelligence
-* 🔍 Perbandingan Model AI
-* 🗂 Kategori Sampah
-* 📊 Dataset
-* 🚀 Pengembangan Fitur
-* 🏗 Arsitektur Sistem
-* 💻 Tech Stack
-* 📁 Struktur Proyek
-* ⚙️ Instalasi
-* 🚀 Cara Penggunaan
-* 📈 Hasil Pelatihan Model
-* 🖼 Tampilan Aplikasi
-* 🔮 Pengembangan Selanjutnya
-* 👨‍💻 Tim Pengembang
-* 📜 Lisensi
+- [📖 Gambaran Umum](#overview)
+- [🌍 Latar Belakang](#background)
+- [🚀 Status Proyek](#status)
+- [✨ Fitur Utama](#features)
+- [🧠 Model AI](#models)
+- [🗂 Kategori Sampah](#kategori)
+- [📊 Dataset](#dataset)
+- [🚀 Pengembangan Fitur](#enhancement)
+- [🏗 Arsitektur Sistem](#architecture)
+- [💻 Tech Stack](#tech-stack)
+- [📁 Struktur Proyek](#project-structure)
+- [⚙️ Instalasi](#installation)
+- [🚀 Cara Penggunaan](#usage)
+- [📈 Hasil Pelatihan Model](#results)
+- [🖼 Tampilan Aplikasi](#preview)
+- [🔮 Pengembangan Selanjutnya](#future)
+- [👨‍💻 Tim Pengembang](#team)
+- [📜 Lisensi](#license)
 
 ---
 
