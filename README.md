@@ -8,62 +8,97 @@
 ![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-red)
 ![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-purple)
 
-### Smart Waste Classification & Real-Time Detection System using Artificial Intelligence
+### Sistem Klasifikasi dan Deteksi Sampah Real-Time Berbasis Artificial Intelligence
 
-Developed by Telkom University Students
+Dikembangkan oleh Mahasiswa Telkom University
 
 </div>
 
 ---
 
-# 📖 Overview
+# 📑 Daftar Isi
 
-SmartWaste AI adalah aplikasi berbasis Artificial Intelligence yang dirancang untuk membantu pengguna mengenali dan memilah sampah secara otomatis menggunakan teknologi Computer Vision dan Deep Learning.
-
-Sistem menyediakan dua metode identifikasi:
-
-### 🖼 Image Classification
-
-Pengguna mengunggah gambar sampah dan sistem akan mengklasifikasikan jenis sampah menggunakan model MobileNetV2.
-
-### 📷 Real-Time Waste Detection
-
-Pengguna dapat menggunakan kamera secara langsung untuk mendeteksi objek sampah secara real-time menggunakan model YOLOv8 dan OpenCV.
-
-Selain memberikan hasil prediksi, sistem juga menampilkan confidence score dan rekomendasi pengelolaan sampah yang sesuai.
-
----
-
-# 🌍 Background
-
-Salah satu permasalahan utama dalam pengelolaan sampah adalah rendahnya kesadaran masyarakat dalam melakukan pemilahan sampah berdasarkan jenisnya.
-
-Kesalahan dalam pemilahan menyebabkan:
-
-* Sulitnya proses daur ulang
-* Meningkatnya jumlah sampah di TPA
-* Menurunnya efisiensi pengolahan limbah
-
-Melalui SmartWaste AI, pengguna dapat dengan mudah mengenali jenis sampah hanya melalui gambar atau kamera sehingga proses pemilahan dapat dilakukan dengan lebih cepat dan akurat.
+* 📖 Gambaran Umum
+* 🌍 Latar Belakang
+* 🚀 Status Proyek
+* ✨ Fitur Utama
+* 🧠 Model Artificial Intelligence
+* 🔍 Perbandingan Model AI
+* 🗂 Kategori Sampah
+* 📊 Dataset
+* 🚀 Pengembangan Fitur
+* 🏗 Arsitektur Sistem
+* 💻 Tech Stack
+* 📁 Struktur Proyek
+* ⚙️ Instalasi
+* 🚀 Cara Penggunaan
+* 📈 Hasil Pelatihan Model
+* 🖼 Tampilan Aplikasi
+* 🔮 Pengembangan Selanjutnya
+* 👨‍💻 Tim Pengembang
+* 📜 Lisensi
 
 ---
 
-# ✨ Main Features
+# 📖 Gambaran Umum
 
-## 📸 Image Classification
+SmartWaste AI merupakan aplikasi berbasis Artificial Intelligence yang dirancang untuk membantu pengguna mengenali dan memilah sampah secara otomatis menggunakan teknologi Computer Vision dan Deep Learning.
+
+Sistem ini menggabungkan dua pendekatan Artificial Intelligence:
+
+### 📸 Klasifikasi Gambar
+
+Menggunakan MobileNetV2 untuk mengidentifikasi jenis sampah dari gambar yang diunggah pengguna.
+
+### 📷 Deteksi Sampah Real-Time
+
+Menggunakan YOLOv8 dan OpenCV untuk mendeteksi objek sampah secara langsung melalui kamera dengan bounding box dan confidence score.
+
+Selain memberikan hasil prediksi, sistem juga menampilkan rekomendasi pengelolaan sampah sesuai kategori yang terdeteksi.
+
+---
+
+# 🌍 Latar Belakang
+
+Permasalahan sampah masih menjadi salah satu tantangan lingkungan terbesar di Indonesia.
+
+Kurangnya kesadaran masyarakat dalam memilah sampah menyebabkan:
+
+* Rendahnya efektivitas proses daur ulang
+* Meningkatnya jumlah sampah di Tempat Pembuangan Akhir (TPA)
+* Menurunnya efisiensi pengelolaan limbah
+
+SmartWaste AI dikembangkan sebagai solusi edukatif berbasis Artificial Intelligence untuk membantu masyarakat mengenali jenis sampah secara cepat dan akurat.
+
+---
+
+# 🚀 Status Proyek
+
+| Modul                       | Status                |
+| --------------------------- | --------------------- |
+| MobileNetV2 Classification  | ✅ Selesai             |
+| YOLOv8 Real-Time Detection  | ✅ Selesai             |
+| Flask Web Integration       | ✅ Selesai             |
+| Waste Recommendation System | ✅ Selesai             |
+| Responsive Web Interface    | ✅ Selesai             |
+| Deployment Cloud            | 🚧 Dalam Pengembangan |
+
+---
+
+# ✨ Fitur Utama
+
+## 📸 Klasifikasi Gambar
 
 * Upload gambar sampah
-* Preview gambar sebelum diproses
+* Preview gambar
 * Prediksi kategori sampah
 * Confidence score
-* Per-class probability
-* Waste management recommendation
+* Probabilitas tiap kategori
+* Rekomendasi pengelolaan sampah
 
----
+### 📷 Deteksi Sampah Real-Time
 
-## 📷 Real-Time Camera Detection
-
-* Webcam integration
+* Integrasi webcam
 * Real-time object detection
 * Bounding box visualization
 * Multi-object detection
@@ -71,40 +106,37 @@ Melalui SmartWaste AI, pengguna dapat dengan mudah mengenali jenis sampah hanya 
 * YOLOv8 inference
 * OpenCV camera processing
 
----
-
-## 🌐 Website Features
+### 🌐 Website Features
 
 * Responsive Design
-* Dark Theme Interface
 * Modern Dashboard
-* AI Performance Statistics
-* About Project Page
-* Dataset Information
-* Technology Overview
+* Statistik Model AI
+* Informasi Dataset
+* Informasi Teknologi
+* Halaman Tentang Proyek
 
 ---
 
-# 🧠 Artificial Intelligence Models
+# 🧠 Model Artificial Intelligence
 
-## MobileNetV2 Classification Model
+## MobileNetV2
 
-Model klasifikasi gambar menggunakan Transfer Learning dari MobileNetV2.
+Model klasifikasi gambar berbasis Transfer Learning.
 
-### Configuration
+### Konfigurasi
 
-| Parameter       | Value                         |
-| --------------- | ----------------------------- |
-| Architecture    | MobileNetV2                   |
-| Framework       | TensorFlow / Keras            |
-| Input Size      | 224 × 224                     |
-| Classes         | 5                             |
-| Training Method | Transfer Learning             |
-| Dataset         | Kaggle Garbage Classification |
+| Parameter    | Nilai                           |
+| ------------ | ------------------------------- |
+| Arsitektur   | MobileNetV2                     |
+| Framework    | TensorFlow / Keras              |
+| Ukuran Input | 224 × 224                       |
+| Jumlah Kelas | 5                               |
+| Tugas        | Image Classification            |
+| Dataset      | Garbage Classification (Kaggle) |
 
-### Performance
+### Performa
 
-| Metric    | Score  |
+| Metrik    | Nilai  |
 | --------- | ------ |
 | Accuracy  | 90.02% |
 | Precision | 88%    |
@@ -113,34 +145,59 @@ Model klasifikasi gambar menggunakan Transfer Learning dari MobileNetV2.
 
 ---
 
-## YOLOv8 Detection Model
+## YOLOv8
 
 Model deteksi objek untuk fitur kamera real-time.
 
-### Configuration
+### Konfigurasi
 
-| Parameter    | Value                           |
-| ------------ | ------------------------------- |
-| Architecture | YOLOv8                          |
-| Framework    | Ultralytics                     |
-| Task         | Object Detection                |
-| Dataset      | Roboflow Garbage Classification |
-| Input Source | Webcam                          |
-| Output       | Bounding Box + Confidence       |
+| Parameter    | Nilai                     |
+| ------------ | ------------------------- |
+| Arsitektur   | YOLOv8                    |
+| Framework    | Ultralytics               |
+| Jumlah Kelas | 6                         |
+| Tugas        | Object Detection          |
+| Input        | Webcam                    |
+| Output       | Bounding Box + Confidence |
 
 ---
 
-# 🗂 Waste Categories
+# 🔍 Perbandingan Model AI
 
-SmartWaste AI mampu mengenali lima kategori sampah berikut:
+| Spesifikasi            | MobileNetV2        | YOLOv8        |
+| ---------------------- | ------------------ | ------------- |
+| Tugas                  | Klasifikasi Gambar | Deteksi Objek |
+| Input                  | Upload Gambar      | Kamera        |
+| Jumlah Kelas           | 5                  | 6             |
+| Real-Time              | ❌                  | ✅             |
+| Bounding Box           | ❌                  | ✅             |
+| Multi Object Detection | ❌                  | ✅             |
+| Confidence Score       | ✅                  | ✅             |
 
-| Icon | Category | Description                    |
-| ---- | -------- | ------------------------------ |
-| ♻️   | Plastic  | Botol plastik, kemasan plastik |
-| 📄   | Paper    | Kertas dan kardus              |
-| 🔮   | Glass    | Kaca hijau, coklat, dan bening |
-| ⚙️   | Metal    | Kaleng dan logam               |
-| 🌿   | Organic  | Sampah organik dan biologis    |
+---
+
+# 🗂 Kategori Sampah
+
+SmartWaste AI menggunakan dua model AI dengan konfigurasi kategori yang berbeda.
+
+## MobileNetV2 (5 Kategori)
+
+* ♻️ Plastik
+* 📄 Kertas
+* 🔮 Kaca
+* ⚙️ Logam
+* 🌿 Organik
+
+## YOLOv8 (6 Kategori)
+
+* 🌿 Organik
+* 📦 Karton
+* 🔮 Kaca
+* ⚙️ Logam
+* 📄 Kertas
+* ♻️ Plastik
+
+Model YOLOv8 menambahkan kategori **Karton** secara terpisah sehingga mampu melakukan identifikasi yang lebih spesifik dibandingkan model klasifikasi.
 
 ---
 
@@ -148,52 +205,61 @@ SmartWaste AI mampu mengenali lima kategori sampah berikut:
 
 ## Dataset Klasifikasi
 
-### Garbage Classification Dataset
+**Garbage Classification Dataset**
 
-Source:
+Sumber:
 
 https://www.kaggle.com/datasets/mostafaabla/garbage-classification
 
-### Original Classes
+Kategori akhir MobileNetV2:
 
-* battery
-* biological
-* cardboard
-* clothes
-* green-glass
-* brown-glass
-* white-glass
-* metal
-* paper
-* plastic
-* shoes
-* trash
+* Plastik
+* Kertas
+* Kaca
+* Logam
+* Organik
 
-### Merged Categories
-
-| Final Category | Original Classes                        |
-| -------------- | --------------------------------------- |
-| Plastic        | plastic                                 |
-| Paper          | paper + cardboard                       |
-| Glass          | green-glass + brown-glass + white-glass |
-| Metal          | metal                                   |
-| Organic        | biological                              |
+Pada dataset ini, kategori **cardboard** digabungkan ke dalam kategori **paper**.
 
 ---
 
 ## Dataset Deteksi
 
-### Garbage Classification Dataset v2
+**Garbage Classification Dataset v2**
 
-Source:
+Sumber:
 
 https://universe.roboflow.com/material-identification/garbage-classification-3/dataset/2
 
-Dataset ini digunakan untuk melatih model YOLOv8 agar mampu melakukan deteksi objek sampah secara real-time.
+Kategori YOLOv8:
+
+* Organik
+* Karton
+* Kaca
+* Logam
+* Kertas
+* Plastik
 
 ---
 
-# 🏗 System Architecture
+# 🚀 Pengembangan Fitur
+
+Pada implementasi awal, SmartWaste AI hanya menggunakan MobileNetV2 untuk klasifikasi gambar dengan 5 kategori sampah.
+
+Sebagai pengembangan lanjutan, ditambahkan fitur:
+
+* YOLOv8 Object Detection
+* Real-Time Camera Detection
+* OpenCV Integration
+* Multi-Object Detection
+* Bounding Box Visualization
+* Cardboard Detection
+
+Dengan pengembangan ini, sistem mampu melakukan identifikasi sampah secara langsung melalui kamera secara real-time.
+
+---
+
+# 🏗 Arsitektur Sistem
 
 ```text
 User
@@ -228,7 +294,7 @@ SmartWaste AI Website
 
 # 💻 Tech Stack
 
-## Artificial Intelligence
+### Artificial Intelligence
 
 * TensorFlow
 * Keras
@@ -238,224 +304,21 @@ SmartWaste AI Website
 * NumPy
 * Pillow
 
----
-
-## Backend
+### Backend
 
 * Flask
 * Python
 
----
-
-## Frontend
+### Frontend
 
 * HTML5
 * CSS3
 * JavaScript
 
----
-
-## Deployment
+### Deployment
 
 * GitHub
 * Vercel
-
----
-
-# 📁 Project Structure
-
-```text
-SMARTWASTE_AI
-│
-├── app.py
-├── requirements.txt
-│
-├── datasets
-│   ├── garbage
-│   ├── raw
-│   └── yolo
-│
-├── model
-│   ├── smartwaste_model.h5
-│   ├── smartwaste_yolo.pt
-│   └── class_indices.json
-│
-├── logs
-│   ├── stage1
-│   └── stage2
-│
-├── runs
-│   └── detect
-│       └── smartwaste
-│           ├── weights
-│           │   ├── best.pt
-│           │   └── last.pt
-│           │
-│           ├── labels.jpg
-│           ├── results.csv
-│           ├── train_batch0.jpg
-│           ├── train_batch1.jpg
-│           └── train_batch2.jpg
-│
-├── static
-│   ├── css
-│   │   └── style.css
-│   │
-│   ├── images
-│   │   ├── logo-tf.png
-│   │   └── logo-lab.png
-│   │
-│   ├── js
-│   │   ├── main.js
-│   │   ├── klasifikasi.js
-│   │   └── camera.js
-│   │
-│   └── uploads
-│
-├── templates
-│   ├── base.html
-│   ├── index.html
-│   ├── klasifikasi.html
-│   ├── camera.html
-│   └── about.html
-│
-├── prepare_dataset.py
-├── train_keras.py
-├── train_yolo.py
-└── README.md
-```
-
----
-
-# ⚙️ Installation
-
-Clone repository
-
-```bash
-git clone https://github.com/yourusername/SmartWaste-AI.git
-```
-
-Masuk ke folder project
-
-```bash
-cd SmartWaste-AI
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-Jalankan aplikasi
-
-```bash
-python app.py
-```
-
-Buka browser
-
-```bash
-http://localhost:5000
-```
-
----
-
-# 🚀 Usage
-
-## Classification
-
-1. Buka halaman Klasifikasi
-2. Upload gambar sampah
-3. Klik tombol Prediksi
-4. Lihat hasil klasifikasi
-5. Baca rekomendasi pengelolaan
-
----
-
-## Camera Detection
-
-1. Buka halaman Camera
-2. Aktifkan webcam
-3. Arahkan kamera ke objek sampah
-4. Sistem mendeteksi objek secara real-time
-5. Hasil ditampilkan dalam bentuk bounding box dan confidence score
-
----
-
-# 📈 Training Results
-
-## MobileNetV2
-
-### Training Configuration
-
-* Image Size : 224×224
-* Batch Size : 32
-* Optimizer : Adam
-* Transfer Learning
-* Fine Tuning
-
-### Result
-
-| Metric              | Value  |
-| ------------------- | ------ |
-| Accuracy            | 90.02% |
-| Validation Accuracy | 93.53% |
-| Test Loss           | 0.3274 |
-
----
-
-## YOLOv8
-
-### Training Configuration
-
-* Framework : Ultralytics YOLOv8
-* Dataset : Roboflow Garbage Dataset
-* Task : Object Detection
-
-### Outputs
-
-* best.pt
-* last.pt
-* labels.jpg
-* results.csv
-* training batches
-
----
-
-# 🖼 Screenshots
-
-## Home Page
-
-Tambahkan screenshot Home Page di sini.
-
-```markdown
-![Home](assets/homepage.png)
-```
-
----
-
-## Classification Page
-
-```markdown
-![Classification](assets/classification.png)
-```
-
----
-
-## Camera Detection
-
-```markdown
-![Camera](assets/camera-detection.png)
-```
-
----
-
-## About Page
-
-```markdown
-![About](assets/about.png)
-```
 
 ---
 
@@ -922,43 +785,84 @@ Berisi:
 ```
 ```
 
-# 📌 Project Enhancement
+# ⚙️ Instalasi
 
-SmartWaste AI tidak hanya memenuhi seluruh kebutuhan proyek yang diberikan, tetapi juga menambahkan fitur lanjutan berupa:
+```bash
+git clone https://github.com/arasyfathi/SmartWaste-AI.git
 
-### Original Requirement
+cd SmartWaste-AI
 
-✅ Upload gambar
+pip install -r requirements.txt
 
-✅ Prediksi jenis sampah
+python app.py
+```
 
-✅ Confidence score
+Akses aplikasi melalui:
 
-✅ Rekomendasi pengelolaan
-
----
-
-### Additional Features
-
-✅ Real-Time Camera Detection
-
-✅ YOLOv8 Object Detection
-
-✅ OpenCV Integration
-
-✅ Multi-object Detection
-
-✅ Bounding Box Visualization
-
-Dengan tambahan ini, SmartWaste AI mampu melakukan identifikasi sampah baik dari gambar statis maupun video real-time.
+```text
+http://localhost:5000
+```
 
 ---
 
-# 🔮 Future Improvements
+# 🚀 Cara Penggunaan
+
+## Klasifikasi Gambar
+
+1. Buka halaman Klasifikasi
+2. Upload gambar sampah
+3. Klik Prediksi
+4. Lihat hasil klasifikasi
+5. Baca rekomendasi pengelolaan
+
+## Deteksi Real-Time
+
+1. Buka halaman Camera
+2. Aktifkan webcam
+3. Arahkan kamera ke objek sampah
+4. Sistem melakukan deteksi secara real-time
+5. Hasil ditampilkan dalam bentuk bounding box dan confidence score
+
+---
+
+# 📈 Hasil Pelatihan Model
+
+## MobileNetV2
+
+| Metric              | Value  |
+| ------------------- | ------ |
+| Accuracy            | 90.02% |
+| Validation Accuracy | 93.53% |
+| Test Loss           | 0.3274 |
+
+## YOLOv8
+
+Output training:
+
+* best.pt
+* last.pt
+* labels.jpg
+* results.csv
+
+---
+
+# 🖼 Tampilan Aplikasi
+
+Tambahkan screenshot berikut ke folder assets:
+
+* Home Page
+* Classification Page
+* Camera Detection
+* About Page
+* YOLO Detection Result
+
+---
+
+# 🔮 Pengembangan Selanjutnya
 
 * Mobile Application Version
-* Cloud Deployment
 * Smart Bin Integration
+* Cloud Deployment
 * Waste Volume Estimation
 * Multi-Language Support
 * User Authentication
@@ -967,36 +871,30 @@ Dengan tambahan ini, SmartWaste AI mampu melakukan identifikasi sampah baik dari
 
 ---
 
-# 👨‍💻 Team
+# 👨‍💻 Tim Pengembang
 
-### SmartWaste AI Team
+### Fathi Arasy
 
-**Fathi Arasy**
+Machine Learning & Backend Developer
 
-WEB
+### Adelia Afriliani
 
----
+UI/UX Designer & Frontend Developer
 
-**Adelia Afriliani**
+### Ghalib Hafuza
 
-UI/UX
-
----
-
-**Ghalib Hafuza**
-
-MODEL
+Computer Vision & Model Development
 
 ---
 
 Telkom University
 
-Academic Year 2026
+Tahun Akademik 2026
 
 ---
 
-# 📜 License
+# 📜 Lisensi
 
-This project was developed for educational purposes as part of the Artificial Intelligence Project at Telkom University.
+Proyek ini dikembangkan untuk keperluan akademik sebagai bagian dari mata kuliah Artificial Intelligence di Telkom University.
 
 © 2026 SmartWaste AI Team
