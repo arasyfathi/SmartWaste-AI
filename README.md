@@ -411,21 +411,6 @@ Contoh:
 ```md
 ![Home](static/images/home-preview.png)
 ```
-
----
-
-# 🔮 Pengembangan Selanjutnya
-
-* Mobile Application
-* Smart Bin Integration
-* Cloud Deployment
-* User Authentication
-* Detection History
-* AI Analytics Dashboard
-* Multi-Language Support
-
----
-
 # 👥 Tim Pengembang
 
 ### Fathi Arasy
