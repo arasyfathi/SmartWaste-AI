@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}SmartWaste AI — Kenali Sampahmu, Jaga Bumi Kita{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <!-- 3D-ish orbit visual -->
+  <div class="hero-orbit">
+    <div class="orbit-ring"></div>
+    <div class="orbit-core">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m14 16-3 3 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <!-- floating category chips (rotating orbit) -->
+    <div class="orbit-satellites">
+      <div class="orbit-chip c1" style="color:#f59e0b" title="Logam">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="orbit-chip c2" style="color:#3b82f6" title="Plastik">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="3" width="8" height="3" rx="1" fill="currentColor" opacity="0.5"/><path d="M9 6v2.5L7 11v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-9l-2-2.5V6" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="currentColor" fill-opacity="0.12"/><line x1="7.5" y1="14" x2="16.5" y2="14" stroke="currentColor" stroke-width="2"/></svg>
+      </div>
+      <div class="orbit-chip c3" style="color:#22c55e" title="Organik">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" fill="currentColor" opacity="0.18"/><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="orbit-chip c4" style="color:#8b5cf6" title="Kertas">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z" fill="currentColor"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75L19 14z" fill="currentColor" opacity="0.6"/></svg>
+      AI-POWERED WASTE CLASSIFICATION
+    </div>
+    <h1 class="hero-title">
+      Kenali Sampahmu,<br>
+      <span class="accent">Jaga Bumi Kita</span>
+    </h1>
+    <p class="hero-sub">
+      Upload foto sampah &amp; deteksi real-time dengan kamera — didukung YOLOv8 +
+      MobileNetV2 akurasi tinggi untuk masa depan lingkungan yang lebih baik.
+    </p>
+    <div class="hero-actions">
+      <a href="/klasifikasi" class="btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
+        Mulai Klasifikasi
+      </a>
+      <a href="/camera" class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="currentColor" opacity="0.4"/></svg>
+        Coba Kamera Live
+      </a>
+      <a href="/about" class="btn-ghost">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 7c-2-1.5-4.5-2-7-2v13c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V5c-2.5 0-5 .5-7 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="currentColor" fill-opacity="0.08"/><line x1="12" y1="7" x2="12" y2="20" stroke="currentColor" stroke-width="2"/></svg>
+        Pelajari Lebih
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Stats Bar ─────────────────────────────────────────────────────────── -->
+  <div class="stats-bar fade-up">
+    <div class="stat">
+      <span class="stat-num">97.2%</span>
+      <span class="stat-label">YOLO mAP50</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num">90.02%</span>
+      <span class="stat-label">MOBILENETV2 ACC.</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num">6</span>
+      <span class="stat-label">KATEGORI</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num">&lt;2s</span>
+      <span class="stat-label">WAKTU PREDIKSI</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-num">15K+</span>
+      <span class="stat-label">DATA TRAINING</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Fitur Unggulan ─────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="fade-up">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      FITUR UNGGULAN
+    </div>
+    <h2 class="section-title">Teknologi terdepan untuk<br><span>pemilahan sampah</span></h2>
+  </div>
+
+  <div class="feature-grid fade-up fade-up-delay-1">
+    <div class="feature-card" style="--accent:#7c3aed">
+      <div class="fc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 2A2.5 2.5 0 0 0 7 4.5v.5h-.5A2.5 2.5 0 0 0 4 7.5v.879a2.5 2.5 0 0 0-1.5 2.286v1.67a2.5 2.5 0 0 0 1.5 2.286v.879a2.5 2.5 0 0 0 2.5 2.5H7v.5A2.5 2.5 0 0 0 9.5 21h.25a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H9.5z" fill="currentColor"/><path d="M14.5 2A2.5 2.5 0 0 1 17 4.5v.5h.5A2.5 2.5 0 0 1 20 7.5v.879a2.5 2.5 0 0 1 1.5 2.286v1.67a2.5 2.5 0 0 1-1.5 2.286v.879A2.5 2.5 0 0 1 17.5 18H17v.5a2.5 2.5 0 0 1-2.5 2.5h-.25a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h.25z" fill="currentColor" opacity="0.55"/></svg>
+      </div>
+      <h3>Deep Learning</h3>
+      <p>MobileNetV2 terlatih 15K+ gambar sampah untuk klasifikasi akurat &amp; konsisten.</p>
+      <span class="fc-num">01</span>
+    </div>
+    <div class="feature-card" style="--accent:#f59e0b">
+      <div class="fc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
+      </div>
+      <h3>YOLOv8 Real-time</h3>
+      <p>Deteksi &amp; klasifikasi objek sampah dalam milidetik via webcam browser.</p>
+      <span class="fc-num">02</span>
+    </div>
+    <div class="feature-card" style="--accent:#22c55e">
+      <div class="fc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m14 16-3 3 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>Rekomendasi Cerdas</h3>
+      <p>Saran pengelolaan sampah yang tepat berdasarkan kategori hasil prediksi AI.</p>
+      <span class="fc-num">03</span>
+    </div>
+    <div class="feature-card" style="--accent:#0ea5e9">
+      <div class="fc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3v16a2 2 0 0 0 2 2h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="7" y="13" width="3" height="5" rx="1" fill="currentColor"/><rect x="12" y="9" width="3" height="9" rx="1" fill="currentColor" opacity="0.6"/><rect x="17" y="5" width="3" height="13" rx="1" fill="currentColor" opacity="0.85"/></svg>
+      </div>
+      <h3>Confidence Score</h3>
+      <p>Tingkat keyakinan model AI ditampilkan secara visual dan transparan.</p>
+      <span class="fc-num">04</span>
+    </div>
+    <div class="feature-card" style="--accent:#ea580c">
+      <div class="fc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="currentColor" opacity="0.55"/></svg>
+      </div>
+      <h3>Camera Detection</h3>
+      <p>Deteksi real-time dengan bounding box overlay langsung di UI.</p>
+      <span class="fc-num">05</span>
+    </div>
+    <div class="feature-card" style="--accent:#db2777">
+      <div class="fc-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+      </div>
+      <h3>6 Kategori Sampah</h3>
+      <p>Organik, Karton, Kaca, Logam, Kertas, Plastik — terdeteksi otomatis.</p>
+      <span class="fc-num">06</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Cara Kerja ──────────────────────────────────────────────────────────── -->
+<div class="section-alt">
+  <section class="section">
+    <div class="fade-up">
+      <div class="section-eyebrow">
+        <span class="section-eyebrow-line"></span>
+        CARA KERJA
+      </div>
+      <h2 class="section-title">Empat langkah, <span>satu tujuan</span></h2>
+    </div>
+
+    <div class="steps-wrap fade-up fade-up-delay-1">
+      <div class="step-item">
+        <div class="step-circle">01</div>
+        <strong>Upload Gambar</strong>
+        <p>Pilih foto sampah dari perangkatmu</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-circle">02</div>
+        <strong>AI Analisis</strong>
+        <p>Model deep learning memproses gambar</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-circle">03</div>
+        <strong>Prediksi</strong>
+        <p>Kategori sampah teridentifikasi</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-circle">04</div>
+        <strong>Rekomendasi</strong>
+        <p>Dapatkan saran pengelolaan tepat</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ── Kategori Sampah ────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="fade-up">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      KATEGORI SAMPAH
+    </div>
+    <h2 class="section-title">6 jenis sampah yang <span>dapat dideteksi</span></h2>
+  </div>
+
+  <div class="chips-wrap fade-up fade-up-delay-1">
+    <span class="chip"><span class="chip-dot" style="--c:#3b82f6"></span> Plastik</span>
+    <span class="chip"><span class="chip-dot" style="--c:#8b5cf6"></span> Kertas</span>
+    <span class="chip"><span class="chip-dot" style="--c:#06b6d4"></span> Kaca</span>
+    <span class="chip"><span class="chip-dot" style="--c:#f59e0b"></span> Logam</span>
+    <span class="chip"><span class="chip-dot" style="--c:#22c55e"></span> Organik</span>
+    <span class="chip"><span class="chip-dot" style="--c:#d97706"></span> Karton</span>
+  </div>
+</section>
+
+{% endblock %}
