@@ -1,0 +1,12 @@
+names:
+- Organik
+- Karton
+- Kaca
+- Logam
+- Kertas
+- Plastik
+nc: 6
+path: /content/drive/MyDrive/smartwaste_yolo/datasets/yolo
+test: test/images
+train: train/images
+val: valid/images
