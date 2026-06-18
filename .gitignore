@@ -1,8 +1,10 @@
 __pycache__/
 *.pyc
 
+datasets/
 runs/
 logs/
+uploads/
 
 *.h5
 *.pt

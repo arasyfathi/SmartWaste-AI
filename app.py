@@ -16,14 +16,13 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max upload
 
 # ─── Konfigurasi ──────────────────────────────────────────────────────────────
 UPLOAD_FOLDER    = 'static/uploads'
-MODEL_PATH_KERAS = 'model/smartwaste_model.h5'
+MODEL_PATH_KERAS = 'model/classification/smartwaste_model.h5'
 IMG_SIZE         = 224
 
 # Path YOLO: cek hasil training baru dulu, fallback ke model lama
 YOLO_CANDIDATES = [
-    'runs/detect/smartwaste/weights/best.pt',              # hasil training lokal
-    'runs/detect/runs/detect/smartwaste/weights/best.pt',  # path duplikat (jika terjadi)
-    'model/smartwaste_yolo.pt',                            # fallback model Colab
+    'model/yolo/smartwaste_yolo.pt',
+    'model/smartwaste_yolo.pt'
 ]
 MODEL_PATH_YOLO = next((p for p in YOLO_CANDIDATES if os.path.exists(p)), None)
 
@@ -107,7 +106,7 @@ RECOMMENDATIONS = {
 }
 
 # ─── Konfigurasi Realtime YOLO ─────────────────────────────────────────────────
-YOLO_CONF = 0.40   # threshold lebih rendah, dikompensasi temporal smoothing
+YOLO_CONF = 0.70   # threshold lebih rendah, dikompensasi temporal smoothing
 YOLO_IOU  = 0.45
 
 # ─── Temporal Smoothing & Anti-Flicker ─────────────────────────────────────────
