@@ -1,7 +1,1 @@
-{
-  "Kaca": 0,
-  "Kertas": 1,
-  "Logam": 2,
-  "Organik": 3,
-  "Plastik": 4
-}
+{"kaca": 0, "kertas": 1, "logam": 2, "organik": 3, "plastik": 4}

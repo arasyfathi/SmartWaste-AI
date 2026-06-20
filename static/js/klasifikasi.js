@@ -1,13 +1,12 @@
 // ── SmartWaste AI — klasifikasi.js ────────────────────────────────────────────
 
-// Warna & ikon per kategori (5 kelas MobileNetV2 + fallback umum)
+// Warna & ikon per kategori (5 kelas MobileNetV2)
 const CLASS_META = {
   'Plastik': { color: '#3b82f6', icon: 'plastic' },
   'Kertas':  { color: '#8b5cf6', icon: 'paper' },
   'Kaca':    { color: '#06b6d4', icon: 'glass' },
   'Logam':   { color: '#f59e0b', icon: 'metal' },
   'Organik': { color: '#22c55e', icon: 'organic' },
-  'Karton':  { color: '#d97706', icon: 'cardboard' },
 };
 
 const ICONS = {

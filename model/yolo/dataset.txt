@@ -1,0 +1,20 @@
+SmartWaste AI — Dataset YOLOv8 (Hasil Remap)
+==================================================
+
+Sumber dataset asli : GARBAGE CLASSIFICATION 3 (Roboflow)
+Link                : https://universe.roboflow.com/material-identification/garbage-classification-3/dataset/2
+
+Kelas asli (6)      : BIODEGRADABLE, CARDBOARD, GLASS, METAL, PAPER, PLASTIC
+Kelas hasil remap (5): kaca, kertas, logam, organik, plastik
+
+Mapping kelas:
+  BIODEGRADABLE -> organik
+  CARDBOARD     -> kertas
+  GLASS         -> kaca
+  METAL         -> logam
+  PAPER         -> kertas
+  PLASTIC       -> plastik
+  CLOTH         -> (dibuang, tidak dipakai)
+
+Anotasi dipakai   : 74090
+Anotasi dibuang   : 0

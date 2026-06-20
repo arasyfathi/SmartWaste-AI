@@ -1,0 +1,10 @@
+names:
+- kaca
+- kertas
+- logam
+- organik
+- plastik
+nc: 5
+test: /content/dataset_remapped/test/images
+train: /content/dataset_remapped/train/images
+val: /content/dataset_remapped/valid/images

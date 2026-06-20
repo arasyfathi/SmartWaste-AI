@@ -16,7 +16,7 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max upload
 
 # ─── Konfigurasi ──────────────────────────────────────────────────────────────
 UPLOAD_FOLDER    = 'static/uploads'
-MODEL_PATH_KERAS = 'model/classification/smartwaste_model.h5'
+MODEL_PATH_KERAS = 'model/classification/smartwaste_mobilenetv2.keras'
 IMG_SIZE         = 224
 
 # Path YOLO: cek hasil training baru dulu, fallback ke model lama
@@ -29,14 +29,14 @@ MODEL_PATH_YOLO = next((p for p in YOLO_CANDIDATES if os.path.exists(p)), None)
 # Kelas Keras (5 kelas Indonesia)
 CLASS_NAMES_KERAS = ['Kaca', 'Kertas', 'Logam', 'Organik', 'Plastik']
 
-# Kelas YOLO (6 kelas Roboflow) → mapping ke nama Indonesia
+# Kelas YOLO (5 kelas, hasil remap dataset Roboflow 6→5) → mapping ke nama Indonesia
+# Urutan sesuai data.yaml hasil remap: kaca, kertas, logam, organik, plastik (alfabetis)
 YOLO_CLASS_MAP = {
-    0: 'Organik',   # BIODEGRADABLE
-    1: 'Karton',    # CARDBOARD
-    2: 'Kaca',      # GLASS
-    3: 'Logam',     # METAL
-    4: 'Kertas',    # PAPER
-    5: 'Plastik',   # PLASTIC
+    0: 'Kaca',
+    1: 'Kertas',
+    2: 'Logam',
+    3: 'Organik',
+    4: 'Plastik',
 }
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -62,16 +62,6 @@ RECOMMENDATIONS = {
             'Kertas yang sudah terkena minyak/makanan sebaiknya dikomposkan.',
         ],
         'action': 'Daur Ulang / Kompos'
-    },
-    'Karton': {
-        'icon': '📦', 'color': '#f59e0b',
-        'tips': [
-            'Lipat kardus agar hemat tempat sebelum dibuang.',
-            'Setor ke bank sampah atau pengepul kertas.',
-            'Pastikan kardus kering dan tidak basah.',
-            'Pisahkan dari sampah organik.',
-        ],
-        'action': 'Daur Ulang'
     },
     'Kaca': {
         'icon': '🪟', 'color': '#8b5cf6',
@@ -106,7 +96,7 @@ RECOMMENDATIONS = {
 }
 
 # ─── Konfigurasi Realtime YOLO ─────────────────────────────────────────────────
-YOLO_CONF = 0.70   # threshold lebih rendah, dikompensasi temporal smoothing
+YOLO_CONF = 0.40   # threshold lebih rendah, dikompensasi temporal smoothing
 YOLO_IOU  = 0.45
 
 # ─── Temporal Smoothing & Anti-Flicker ─────────────────────────────────────────
@@ -382,7 +372,7 @@ def camera_frame():
         'success':      True,
         'detections':   detections,
         'inference_ms': inference_ms,
-        'model':        'YOLOv8n' if model_yolo else 'Demo',
+        'model':        'YOLOv8m' if model_yolo else 'Demo',
     })
 
 
