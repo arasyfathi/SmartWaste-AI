@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# requirements-cpu.txt — gunakan file ini jika laptop/PC TIDAK punya GPU NVIDIA
+# (atau menjalankan project ini di mesin selain RTX 5060 milik developer asli).
+#
+# Pasang dengan:
+#   pip install -r requirements-cpu.txt
+#
+# Catatan: tanpa GPU, YOLOv8 (kamera real-time) akan jauh lebih lambat
+# (beberapa detik per frame, bukan puluhan ms). Fitur klasifikasi gambar
+# tunggal (MobileNetV2) tetap cukup cepat di CPU karena hanya 1 gambar.
+# ─────────────────────────────────────────────────────────────────────────────
+flask>=3.0.0
+numpy>=1.24.0
+pillow>=10.0.0
+opencv-python>=4.8.0
+tensorflow>=2.13.0
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0

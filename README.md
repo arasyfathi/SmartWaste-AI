@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python)
-![Flask](https://img.shields.io/badge/Flask-3.0-green?style=for-the-badge&logo=flask)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.16-orange?style=for-the-badge&logo=tensorflow)
-![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-red?style=for-the-badge)
-![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-purple?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Flask](https://img.shields.io/badge/Flask-3.0-green)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.16-orange)
+![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-red)
+![OpenCV](https://img.shields.io/badge/OpenCV-Computer%20Vision-purple)
 
 ### Sistem Klasifikasi dan Deteksi Sampah Real-Time Berbasis Artificial Intelligence
 
@@ -20,20 +20,21 @@ Dikembangkan oleh Mahasiswa Telkom University
 
 - [📖 Gambaran Umum](#-gambaran-umum)
 - [🌍 Latar Belakang](#-latar-belakang)
-- [🎯 Tujuan Pengembangan](#-tujuan-pengembangan)
+- [🚀 Status Proyek](#-status-proyek)
 - [✨ Fitur Utama](#-fitur-utama)
 - [🧠 Model Artificial Intelligence](#-model-artificial-intelligence)
-- [📊 Performa Model](#-performa-model)
+- [🔍 Perbandingan Model AI](#-perbandingan-model-ai)
 - [🗂 Kategori Sampah](#-kategori-sampah)
-- [📦 Dataset](#-dataset)
+- [📊 Dataset](#-dataset)
+- [🚀 Pengembangan Fitur](#-pengembangan-fitur)
 - [🏗 Arsitektur Sistem](#-arsitektur-sistem)
-- [🛠 Teknologi yang Digunakan](#-teknologi-yang-digunakan)
+- [💻 Tech Stack](#-tech-stack)
 - [📁 Struktur Proyek](#-struktur-proyek)
-- [⚙ Instalasi](#-instalasi)
-- [🚀 Cara Menjalankan](#-cara-menjalankan)
-- [🔌 API Endpoint](#-api-endpoint)
+- [⚙️ Instalasi](#️-instalasi)
+- [🚀 Cara Penggunaan](#-cara-penggunaan)
 - [📈 Hasil Pelatihan Model](#-hasil-pelatihan-model)
 - [🖼 Tampilan Aplikasi](#-tampilan-aplikasi)
+- [🔮 Pengembangan Selanjutnya](#-pengembangan-selanjutnya)
 - [👨‍💻 Tim Pengembang](#-tim-pengembang)
 - [📜 Lisensi](#-lisensi)
 
@@ -43,17 +44,17 @@ Dikembangkan oleh Mahasiswa Telkom University
 
 SmartWaste AI merupakan aplikasi berbasis Artificial Intelligence yang dirancang untuk membantu pengguna mengenali dan memilah sampah secara otomatis menggunakan teknologi Computer Vision dan Deep Learning.
 
-Sistem ini menggabungkan dua pendekatan utama:
+Sistem ini menggabungkan dua pendekatan Artificial Intelligence:
 
 ### 📸 Klasifikasi Gambar
 
 Menggunakan MobileNetV2 untuk mengidentifikasi jenis sampah dari gambar yang diunggah pengguna.
 
-### 🎥 Deteksi Sampah Real-Time
+### 📷 Deteksi Sampah Real-Time
 
 Menggunakan YOLOv8 dan OpenCV untuk mendeteksi objek sampah secara langsung melalui kamera dengan bounding box dan confidence score.
 
-Selain memberikan hasil prediksi, sistem juga menampilkan rekomendasi pengelolaan sampah berdasarkan kategori yang terdeteksi.
+Selain memberikan hasil prediksi, sistem juga menampilkan rekomendasi pengelolaan sampah sesuai kategori yang terdeteksi.
 
 ---
 
@@ -63,227 +64,17 @@ Permasalahan sampah masih menjadi salah satu tantangan lingkungan terbesar di In
 
 Kurangnya kesadaran masyarakat dalam memilah sampah menyebabkan:
 
-- Rendahnya efektivitas proses daur ulang
-- Meningkatnya jumlah sampah di Tempat Pembuangan Akhir (TPA)
-- Menurunnya efisiensi pengelolaan limbah
-- Bertambahnya pencemaran lingkungan
+* Rendahnya efektivitas proses daur ulang
+* Meningkatnya jumlah sampah di Tempat Pembuangan Akhir (TPA)
+* Menurunnya efisiensi pengelolaan limbah
 
 SmartWaste AI dikembangkan sebagai solusi edukatif berbasis Artificial Intelligence untuk membantu masyarakat mengenali jenis sampah secara cepat dan akurat.
 
 ---
 
-# 🎯 Tujuan Pengembangan
+## 📁 Struktur Proyek
 
-Tujuan utama pengembangan SmartWaste AI:
-
-- Membantu proses klasifikasi sampah secara otomatis
-- Mendukung edukasi pemilahan sampah
-- Mengimplementasikan teknologi Artificial Intelligence dalam bidang lingkungan
-- Mengembangkan sistem Computer Vision berbasis web
-- Mendukung pengelolaan sampah yang lebih efektif
-
----
-
-# ✨ Fitur Utama
-
-## 📸 Klasifikasi Gambar
-
-- Upload gambar sampah
-- Prediksi menggunakan MobileNetV2
-- Confidence score
-- Visualisasi hasil prediksi
-- Rekomendasi pengelolaan sampah
-
-## 🎥 Deteksi Real-Time
-
-- Webcam real-time
-- YOLOv8 Object Detection
-- Bounding Box
-- Confidence Score
-- Multi-object Detection
-
-## ♻️ Rekomendasi Pengelolaan Sampah
-
-- Daur ulang
-- Kompos
-- Penanganan khusus
-- Edukasi pengelolaan limbah
-
----
-
-# 🧠 Model Artificial Intelligence
-
-## MobileNetV2
-
-Digunakan untuk fitur klasifikasi gambar.
-
-Keunggulan:
-
-- Ringan
-- Cepat
-- Akurasi tinggi
-- Cocok untuk aplikasi web
-
----
-
-## YOLOv8
-
-Digunakan untuk deteksi objek sampah secara real-time.
-
-Keunggulan:
-
-- Real-time Detection
-- Multi-object Detection
-- Bounding Box Localization
-- High Speed Inference
-
----
-
-# 📊 Performa Model
-
-## MobileNetV2 (Klasifikasi)
-
-| Metric | Nilai |
-|----------|----------|
-| Training Accuracy | 90.02% |
-| Validation Accuracy | 93.53% |
-| Test Loss | 0.3274 |
-
----
-
-## YOLOv8 (Deteksi Objek)
-
-| Metric | Nilai |
-|----------|----------|
-| Precision | 58.4% |
-| Recall | 45.7% |
-| mAP@50 | 51.8% |
-| mAP@50-95 | 35.3% |
-
-### Performa per Kelas
-
-| Kelas | Precision | Recall | mAP50 |
-|---------|---------|---------|---------|
-| Organik | 84.2% | 42.5% | 60.6% |
-| Karton | 73.4% | 49.0% | 59.1% |
-| Kaca | 86.4% | 68.4% | 79.6% |
-| Logam | 72.4% | 58.4% | 66.8% |
-| Kertas | 6.2% | 9.1% | 7.3% |
-| Plastik | 28.0% | 46.7% | 37.4% |
-
----
-
-# 🗂 Kategori Sampah
-
-| Kategori | Penanganan |
-|-----------|------------|
-| 🌿 Organik | Kompos |
-| ♻️ Plastik | Daur Ulang |
-| 📄 Kertas | Daur Ulang |
-| 📦 Karton | Daur Ulang |
-| ⚙️ Logam | Dijual ke Pengepul |
-| 🪟 Kaca | Penanganan Khusus |
-
----
-
-# 📦 Dataset
-
-Dataset yang digunakan berasal dari beberapa sumber publik:
-
-## Dataset Klasifikasi
-
-- Garbage Classification Dataset (Kaggle)
-- Waste Classification Dataset (Kaggle)
-
-## Dataset Deteksi Objek
-
-- Garbage Classification 3 (Roboflow)
-- Dataset hasil anotasi tambahan
-
----
-
-# 🏗 Arsitektur Sistem
-
-```text
-Pengguna
-    │
-    ▼
-Website Flask
-    │
- ┌──┴───────────────┐
- │                  │
- ▼                  ▼
-MobileNetV2      YOLOv8
-(Klasifikasi)    (Deteksi)
- │                  │
- ▼                  ▼
-Prediksi       Bounding Box
- │                  │
- └──────┬───────────┘
-        ▼
-Rekomendasi Pengelolaan Sampah
 ```
-<<<<<<< HEAD
-
----
-
-# 🛠 Teknologi yang Digunakan
-
-## Backend
-
-- Flask
-- Python
-
-## Machine Learning
-
-- TensorFlow
-- Keras
-- MobileNetV2
-
-## Computer Vision
-
-- OpenCV
-- YOLOv8
-- Ultralytics
-
-## Frontend
-
-- HTML5
-- CSS3
-- JavaScript
-
----
-
-# 📁 Struktur Proyek
-
-```text
-SmartWaste-AI/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-│
-├── model/
-│   ├── classification/
-│   └── yolo/
-│
-├── static/
-│   ├── css/
-│   ├── js/
-│   └── assets/
-│
-├── templates/
-│   ├── index.html
-│   ├── klasifikasi.html
-│   ├── camera.html
-│   └── about.html
-│
-├── train/
-│   ├── train_keras.py
-│   └── train_yolo.py
-│
-└── datasets/
-=======
 smartwaste_ai/
 ├── app.py                  # Flask backend
 ├── requirements.txt        # Dependencies
@@ -323,16 +114,12 @@ smartwaste_ai/
         ├── main.js         # Navbar & utilities
         ├── klasifikasi.js  # Upload & predict logic
         └── camera.js       # WebRTC & YOLO real-time
->>>>>>> 56a5ce73 (Refactor project structure and add trained AI models)
 ```
 
 ---
 
-# ⚙ Instalasi
+## 🧠 Training Model
 
-<<<<<<< HEAD
-Clone repository:
-=======
 ### A. Keras / MobileNetV2 (untuk halaman Klasifikasi)
 
 **1. Download Dataset dari Kaggle:**
@@ -576,27 +363,18 @@ Berisi:
 ```
 
 # ⚙️ Instalasi
->>>>>>> 56a5ce73 (Refactor project structure and add trained AI models)
 
 ```bash
-git clone https://github.com/arasyafathi/smartwaste-AI.git
+git clone https://github.com/arasyfathi/SmartWaste-AI.git
 
-cd smartwaste-AI
-```
+cd SmartWaste-AI
 
-Install dependency:
-
-```bash
 pip install -r requirements.txt
-```
 
-Jalankan aplikasi:
-
-```bash
 python app.py
 ```
 
-Akses melalui browser:
+Akses aplikasi melalui:
 
 ```text
 http://localhost:5000
@@ -604,7 +382,7 @@ http://localhost:5000
 
 ---
 
-# 🚀 Cara Menjalankan
+# 🚀 Cara Penggunaan
 
 ## Klasifikasi Gambar
 
@@ -614,29 +392,13 @@ http://localhost:5000
 4. Lihat hasil klasifikasi
 5. Baca rekomendasi pengelolaan
 
----
-
 ## Deteksi Real-Time
 
 1. Buka halaman Camera
-2. Izinkan akses webcam
+2. Aktifkan webcam
 3. Arahkan kamera ke objek sampah
-4. Sistem melakukan deteksi secara otomatis
-5. Hasil ditampilkan secara real-time
-
----
-
-# 🔌 API Endpoint
-
-| Method | Endpoint | Deskripsi |
-|----------|----------|----------|
-| GET | / | Home |
-| GET | /klasifikasi | Halaman Klasifikasi |
-| GET | /camera | Halaman Kamera |
-| GET | /about | Halaman About |
-| POST | /api/predict | Prediksi Gambar |
-| POST | /api/camera-frame | Deteksi Frame Kamera |
-| GET | /api/status | Status Model |
+4. Sistem melakukan deteksi secara real-time
+5. Hasil ditampilkan dalam bentuk bounding box dan confidence score
 
 ---
 
@@ -644,28 +406,14 @@ http://localhost:5000
 
 ## MobileNetV2
 
-```text
-Accuracy            : 90.02%
-Validation Accuracy : 93.53%
-Test Loss           : 0.3274
-```
+| Metric              | Value  |
+| ------------------- | ------ |
+| Accuracy            | 90.02% |
+| Validation Accuracy | 93.53% |
+| Test Loss           | 0.3274 |
 
 ## YOLOv8m (5 Kelas, Hasil Remap)
 
-<<<<<<< HEAD
-```text
-Precision : 58.4%
-Recall    : 45.7%
-mAP@50    : 51.8%
-mAP50-95  : 35.3%
-```
-
-Model terbaik:
-
-```text
-model/yolo/smartwaste_yolo.pt
-```
-=======
 Training 100 epoch (dengan resume di Google Colab, GPU Tesla T4), checkpoint terbaik di epoch 77.
 
 | Metric              | Value  |
@@ -688,37 +436,36 @@ Training 100 epoch (dengan resume di Google Colab, GPU Tesla T4), checkpoint ter
 > **Catatan:** Kelas **Plastik** memiliki performa terendah, kemungkinan akibat jumlah instance yang jauh lebih sedikit dibanding kelas lain dalam dataset (class imbalance). Kelas **Organik** juga cukup sering tertukar dengan background pada confusion matrix, kemungkinan karena dominasi jumlah instance organik di dataset. Lihat `reports/yolov8/` untuk grafik training history dan confusion matrix lengkap.
 
 Output training: `best.pt`, `last.pt`, `confusion_matrix.png`, `training_history.png`, `results.csv`
->>>>>>> 56a5ce73 (Refactor project structure and add trained AI models)
 
 ---
 
 # 🖼 Tampilan Aplikasi
 
-## Home Page
+Tambahkan screenshot berikut ke folder assets:
 
-Tambahkan screenshot Home Page.
+* Home Page
+* Classification Page
+* Camera Detection
+* About Page
+* YOLO Detection Result
 
-## Halaman Klasifikasi
+---
 
-Tambahkan screenshot halaman klasifikasi.
+# 🔮 Pengembangan Selanjutnya
 
-## Halaman Camera
-
-Tambahkan screenshot hasil deteksi YOLO.
-
-## Halaman About
-
-Tambahkan screenshot halaman about.
+* Mobile Application Version
+* Smart Bin Integration
+* Cloud Deployment
+* Waste Volume Estimation
+* Multi-Language Support
+* User Authentication
+* Detection History
+* AI Analytics Dashboard
 
 ---
 
 # 👨‍💻 Tim Pengembang
 
-<<<<<<< HEAD
-### Fathi Arasy
-### Adelia Afriliani
-### Ghalib Hafuza
-=======
 ### Fathi Arasy — NIM 101022400103
 
 Machine Learning & Backend Developer
@@ -728,7 +475,8 @@ Machine Learning & Backend Developer
 UI/UX Designer & Frontend Developer
 
 ### Ghalib Hafuza — NIM 10012400211
->>>>>>> 56a5ce73 (Refactor project structure and add trained AI models)
+
+Computer Vision & Model Development
 
 ---
 

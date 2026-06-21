@@ -1,12 +1,16 @@
 // ── SmartWaste AI — klasifikasi.js ────────────────────────────────────────────
 
 // Warna & ikon per kategori (5 kelas MobileNetV2)
+// FIX: warna disamakan dengan RECOMMENDATIONS di app.py (dipakai halaman Camera).
+// Sebelumnya skema warna di sini berbeda sendiri dari backend — Plastik/Kertas/
+// Kaca/Logam tertukar warnanya antara halaman Klasifikasi & Camera. Sekarang
+// satu sumber kebenaran: warna sama persis dengan app.py.
 const CLASS_META = {
-  'Plastik': { color: '#3b82f6', icon: 'plastic' },
-  'Kertas':  { color: '#8b5cf6', icon: 'paper' },
-  'Kaca':    { color: '#06b6d4', icon: 'glass' },
-  'Logam':   { color: '#f59e0b', icon: 'metal' },
-  'Organik': { color: '#22c55e', icon: 'organic' },
+  'Plastik': { color: '#06b6d4', icon: 'plastic' },
+  'Kertas':  { color: '#f59e0b', icon: 'paper' },
+  'Kaca':    { color: '#8b5cf6', icon: 'glass' },
+  'Logam':   { color: '#10d9a0', icon: 'metal' },
+  'Organik': { color: '#4ade80', icon: 'organic' },
 };
 
 const ICONS = {
