@@ -55,7 +55,7 @@ def validate_image(path):
         return False
 
 
-def process_dataset(src_dir, dst_dir, resize=True):
+def process_dataset(src_dir, dst_dir, resize=True, include_lainnya=False):
     src = Path(src_dir)
     dst = Path(dst_dir)
 
@@ -66,6 +66,7 @@ def process_dataset(src_dir, dst_dir, resize=True):
     stats = {}
     skipped = 0
     unrecognized = []
+    excluded_lainnya = 0
 
     for folder in sorted(src.iterdir()):
         if not folder.is_dir():
@@ -75,6 +76,19 @@ def process_dataset(src_dir, dst_dir, resize=True):
         if not label:
             unrecognized.append(folder.name)
             print(f"[SKIP] Folder tidak dikenali: {folder.name}")
+            continue
+
+        # PENTING: app.py & model klasifikasi HARDCODE 5 kelas (Kaca, Kertas,
+        # Logam, Organik, Plastik). Kalau folder "Lainnya" ikut ditulis ke
+        # dst_dir, train_keras.py akan otomatis mendeteksi 6 kelas (lewat
+        # os.listdir), dan index kelas hasil training TIDAK AKAN COCOK lagi
+        # dengan urutan CLASS_NAMES_KERAS di app.py — model akan salah label
+        # tanpa error apa pun (silent bug). Default: kelas ini DISKIP.
+        # Gunakan --include-lainnya hanya jika app.py & CLASS_NAMES_KERAS juga
+        # sudah diupdate untuk mendukung 6 kelas.
+        if label == 'Lainnya' and not include_lainnya:
+            excluded_lainnya += len([f for f in folder.iterdir() if f.suffix.lower() in VALID_EXT])
+            print(f"[SKIP] {folder.name} → 'Lainnya' diabaikan (pakai --include-lainnya untuk menyertakan)")
             continue
 
         out_dir = dst / label
@@ -109,10 +123,14 @@ def process_dataset(src_dir, dst_dir, resize=True):
         print(f"  {label:12s}: {count:6,} gambar")
         total += count
     print(f"  {'TOTAL':12s}: {total:6,} gambar")
-    print(f"  Dilewati (rusak): {skipped}")
+    print(f"  Dilewati (rusak)   : {skipped}")
+    if excluded_lainnya:
+        print(f"  Dikecualikan (Lainnya): {excluded_lainnya} gambar (tidak ditulis ke {dst_dir})")
     if unrecognized:
         print(f"  Tidak dikenali : {unrecognized}")
-    print(f"\nOutput tersimpan di: {dst_dir}")
+    n_classes = len(stats)
+    print(f"\nJumlah kelas final di {dst_dir}: {n_classes}", "✓ (sesuai 5 kelas app.py)" if n_classes == 5 else "⚠ BUKAN 5 — cek app.py & CLASS_NAMES_KERAS sebelum training!")
+    print(f"Output tersimpan di: {dst_dir}")
 
 
 if __name__ == '__main__':
@@ -120,6 +138,11 @@ if __name__ == '__main__':
     parser.add_argument('--src', default='datasets/raw',   help='Folder dataset mentah')
     parser.add_argument('--dst', default='datasets/garbage', help='Folder output')
     parser.add_argument('--no-resize', action='store_true', help='Jangan resize gambar')
+    parser.add_argument('--include-lainnya', action='store_true',
+                         help='Sertakan kelas "Lainnya" (clothes/shoes/trash) — '
+                              'JANGAN dipakai kecuali app.py & CLASS_NAMES_KERAS '
+                              'sudah diupdate untuk 6 kelas.')
     args = parser.parse_args()
 
-    process_dataset(args.src, args.dst, resize=not args.no_resize)
+    process_dataset(args.src, args.dst, resize=not args.no_resize,
+                     include_lainnya=args.include_lainnya)

@@ -1,5 +1,4 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = ''  # ← tambahkan di sini
 import io
 import base64
 import json
@@ -14,8 +13,32 @@ import cv2
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max upload
 
+# ─── Validasi file upload (server-side) ────────────────────────────────────────
+# Sebelumnya validasi tipe/ukuran file HANYA ada di klasifikasi.js (client-side),
+# sehingga gampang dilewati dengan request langsung (curl/Postman) ke /api/predict.
+# Sekarang divalidasi juga di server: ekstensi + MIME type yang dikirim browser.
+ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
+ALLOWED_MIME_TYPES  = {'image/jpeg', 'image/png', 'image/webp'}
+
+# ─── Deteksi GPU otomatis ──────────────────────────────────────────────────────
+# Sebelumnya CUDA_VISIBLE_DEVICES di-set '' di sini sehingga GPU selalu dimatikan
+# dan semua inference YOLO jatuh ke CPU (penyebab utama frame lag & inferensi
+# 4-17 detik/frame). Sekarang device dipilih otomatis: pakai GPU jika tersedia,
+# fallback ke CPU jika tidak ada.
+try:
+    import torch
+    YOLO_DEVICE = 0 if torch.cuda.is_available() else 'cpu'
+    YOLO_HALF   = torch.cuda.is_available()  # FP16 di GPU → lebih cepat lagi
+    if torch.cuda.is_available():
+        print(f"[✓] GPU terdeteksi: {torch.cuda.get_device_name(0)} — YOLO akan pakai GPU")
+    else:
+        print("[!] GPU tidak terdeteksi — YOLO fallback ke CPU (akan lebih lambat)")
+except ImportError:
+    YOLO_DEVICE = 'cpu'
+    YOLO_HALF   = False
+    print("[!] PyTorch tidak ditemukan — fallback ke CPU")
+
 # ─── Konfigurasi ──────────────────────────────────────────────────────────────
-UPLOAD_FOLDER    = 'static/uploads'
 MODEL_PATH_KERAS = 'model/classification/smartwaste_mobilenetv2.keras'
 IMG_SIZE         = 224
 
@@ -38,8 +61,6 @@ YOLO_CLASS_MAP = {
     3: 'Organik',
     4: 'Plastik',
 }
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ─── Rekomendasi per kategori ─────────────────────────────────────────────────
 RECOMMENDATIONS = {
@@ -96,12 +117,17 @@ RECOMMENDATIONS = {
 }
 
 # ─── Konfigurasi Realtime YOLO ─────────────────────────────────────────────────
-YOLO_CONF = 0.40   # threshold lebih rendah, dikompensasi temporal smoothing
-YOLO_IOU  = 0.45
+YOLO_CONF = 0.60   # threshold tinggi: hanya tampilkan deteksi yang model benar-benar yakin
+YOLO_IOU  = 0.45  # NMS YOLO standar — duplikasi same-class dihapus YOLO sendiri
+# imgsz khusus untuk live camera dikecilkan dari 640 → 480 (training tetap 640).
+# Mengurangi resolusi input mempercepat inference secara signifikan, terutama
+# penting kalau device akhirnya tetap fallback ke CPU.
+YOLO_IMGSZ_CAMERA = 416
 
 # ─── Temporal Smoothing & Anti-Flicker ─────────────────────────────────────────
-SMOOTH_WINDOW = 5   # jumlah frame untuk majority voting & confidence averaging
-HOLD_FRAMES   = 4   # toleransi objek "hilang" sebelum benar-benar dihapus dari layar
+SMOOTH_WINDOW = 5   # butuh 5 frame konsisten → kurangi flicker & false positive sesaat
+HOLD_FRAMES   = 1   # objek yang hilang hanya ditahan 1 frame sebelum dihapus
+MIN_CONF_DISPLAY = 0.62  # threshold minimum avg confidence untuk ditampilkan ke user
 
 track_history = defaultdict(lambda: {
     'labels': deque(maxlen=SMOOTH_WINDOW),
@@ -127,9 +153,9 @@ def load_models():
             try:
                 from ultralytics import YOLO
                 model_yolo = YOLO(yolo_path)
-                model_yolo.to('cpu')
+                model_yolo.to(YOLO_DEVICE)
                 yolo_path_used = yolo_path
-                print(f"[✓] YOLOv8 model loaded: {yolo_path}")
+                print(f"[✓] YOLOv8 model loaded: {yolo_path} (device={YOLO_DEVICE})")
                 break
             except Exception as e:
                 print(f"[✗] YOLOv8 load error ({yolo_path}): {e}")
@@ -150,7 +176,13 @@ def load_models():
 
 
 def preprocess_image(img_array):
-    img = cv2.resize(img_array, (IMG_SIZE, IMG_SIZE))
+    # FIX: model Keras (MobileNetV2) dilatih dengan ImageDataGenerator/PIL yang
+    # membaca gambar sebagai RGB. img_array di sini datang dari cv2.imdecode()
+    # yang formatnya BGR — kalau tidak dikonversi, kanal merah & biru tertukar
+    # saat inference (mismatch dengan training), bisa menurunkan akurasi
+    # prediksi secara diam-diam tanpa error apa pun.
+    img = cv2.cvtColor(img_array, cv2.COLOR_BGR2RGB)
+    img = cv2.resize(img, (IMG_SIZE, IMG_SIZE))
     img = img.astype(np.float32) / 255.0
     return np.expand_dims(img, axis=0)
 
@@ -164,21 +196,115 @@ def predict_keras(img_array):
     return CLASS_NAMES_KERAS[pred_idx], confidence, all_scores
 
 
-def predict_demo(img_array):
-    mean_color = img_array.mean(axis=(0, 1))
-    r, g, b = mean_color[2], mean_color[1], mean_color[0]
-    if r > g and r > b:       label, conf = 'Plastik', 0.873
-    elif g > r and g > b:     label, conf = 'Organik', 0.812
-    elif b > r and b > g:     label, conf = 'Kaca',    0.756
-    elif r > 150 and g > 150: label, conf = 'Kertas',  0.834
-    else:                     label, conf = 'Logam',   0.791
-    remaining = 1 - conf
-    others    = [c for c in CLASS_NAMES_KERAS if c != label]
-    scores    = {label: conf}
-    splits    = sorted(np.random.dirichlet(np.ones(4)) * remaining, reverse=True)
-    for i, c in enumerate(others):
-        scores[c] = float(splits[i])
-    return label, conf, scores
+def allowed_file(filename, mimetype):
+    ext_ok  = os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
+    mime_ok = mimetype in ALLOWED_MIME_TYPES
+    return ext_ok and mime_ok
+
+
+def warmup_models():
+    """
+    Inferensi pertama setelah model di-load ke GPU biasanya jauh lebih lambat
+    (cuDNN/cuda melakukan auto-tuning kernel saat pertama dipanggil). Tanpa
+    warmup, USER PERTAMA yang membuka kamera akan kena delay belasan detik itu.
+    Warmup di sini "membakar" delay tersebut saat server baru start, bukan
+    saat user sedang menunggu.
+    """
+    dummy = np.zeros((480, 640, 3), dtype=np.uint8)
+
+    if model_yolo:
+        try:
+            t0 = time.time()
+            model_yolo.predict(dummy, imgsz=YOLO_IMGSZ_CAMERA, device=YOLO_DEVICE,
+                                half=YOLO_HALF, verbose=False)
+            print(f"[✓] YOLOv8 warmup selesai ({round((time.time()-t0)*1000)}ms)")
+        except Exception as e:
+            print(f"[!] YOLOv8 warmup gagal (diabaikan): {e}")
+
+    if model_keras:
+        try:
+            t0 = time.time()
+            predict_keras(dummy)
+            print(f"[✓] Keras warmup selesai ({round((time.time()-t0)*1000)}ms)")
+        except Exception as e:
+            print(f"[!] Keras warmup gagal (diabaikan): {e}")
+
+
+
+
+
+# ─── Manual cross-class NMS helper ────────────────────────────────────────────
+def _nms_detections(raw_boxes, iou_thresh=0.45, frame_w=640, frame_h=360):
+    """
+    NMS lintas kelas dengan dua metrik overlap:
+      1. IoU standar      — untuk objek seukuran
+      2. IoMin (overlap/min_area) — untuk bbox kecil di dalam bbox besar
+         (misal tutup botol di dalam badan botol)
+    Juga memfilter:
+      - bbox yang area-nya > 80% frame (background/noise)
+      - bbox yang area-nya < 0.5% frame (terlalu kecil, bukan objek nyata)
+    """
+    if not raw_boxes:
+        return raw_boxes
+
+    frame_area = frame_w * frame_h
+    filtered = []
+    for b in raw_boxes:
+        bx1, by1, bx2, by2 = b[4], b[5], b[6], b[7]
+        area = (bx2 - bx1) * (by2 - by1)
+        if area <= 0:
+            continue
+        ratio = area / frame_area
+        # Hapus bbox yang terlalu kecil (< 0.5% frame) atau terlalu besar (> 80% frame)
+        if ratio < 0.005 or ratio > 0.80:
+            continue
+        filtered.append(b)
+
+    if len(filtered) <= 1:
+        return filtered
+
+    # Sort by conf descending
+    filtered = sorted(filtered, key=lambda b: b[0], reverse=True)
+    keep = []
+    suppressed = set()
+    for i, b in enumerate(filtered):
+        if i in suppressed:
+            continue
+        keep.append(b)
+        bx1, by1, bx2, by2 = b[4], b[5], b[6], b[7]
+        area_b = (bx2-bx1)*(by2-by1)
+        for j, b2 in enumerate(filtered[i+1:], i+1):
+            if j in suppressed:
+                continue
+            ax1, ay1, ax2, ay2 = b2[4], b2[5], b2[6], b2[7]
+            area_b2 = (ax2-ax1)*(ay2-ay1)
+            ix1 = max(bx1, ax1); iy1 = max(by1, ay1)
+            ix2 = min(bx2, ax2); iy2 = min(by2, ay2)
+            iw = max(0, ix2 - ix1); ih = max(0, iy2 - iy1)
+            inter = iw * ih
+            union = area_b + area_b2 - inter
+            # IoU standar
+            iou = inter / union if union > 0 else 0
+            # IoMin: overlap dibagi area yang lebih kecil (deteksi bbox kecil di dalam bbox besar)
+            iomin = inter / min(area_b, area_b2) if min(area_b, area_b2) > 0 else 0
+            if iou > iou_thresh or iomin > 0.75:
+                suppressed.add(j)
+    return keep
+
+# ─── Error Handlers ───────────────────────────────────────────────────────────
+@app.errorhandler(413)
+def file_too_large(e):
+    return jsonify({'error': 'Ukuran file terlalu besar (maksimal 10MB).'}), 413
+
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({'error': 'Endpoint tidak ditemukan'}), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify({'error': 'Terjadi kesalahan internal pada server'}), 500
 
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
@@ -208,6 +334,9 @@ def predict():
     if file.filename == '':
         return jsonify({'error': 'Tidak ada file dipilih'}), 400
 
+    if not allowed_file(file.filename, file.mimetype):
+        return jsonify({'error': 'Format file tidak didukung. Gunakan JPG, PNG, atau WEBP.'}), 400
+
     img_bytes = file.read()
     nparr     = np.frombuffer(img_bytes, np.uint8)
     img_bgr   = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -215,13 +344,12 @@ def predict():
     if img_bgr is None:
         return jsonify({'error': 'Gagal membaca gambar'}), 400
 
+    if not model_keras:
+        return jsonify({'error': 'Model klasifikasi tidak tersedia. Pastikan file model sudah ada di model/classification/.'}), 503
+
     try:
-        if model_keras:
-            label, confidence, all_scores = predict_keras(img_bgr)
-            model_used = 'MobileNetV2'
-        else:
-            label, confidence, all_scores = predict_demo(img_bgr)
-            model_used = 'Demo Mode'
+        label, confidence, all_scores = predict_keras(img_bgr)
+        model_used = 'MobileNetV2'
     except Exception as e:
         return jsonify({'error': f'Prediksi gagal: {str(e)}'}), 500
 
@@ -271,11 +399,13 @@ def camera_frame():
                         frame,
                         conf    = YOLO_CONF,
                         iou     = YOLO_IOU,
-                        imgsz   = 640,
+                        imgsz   = YOLO_IMGSZ_CAMERA,
                         persist = True,
                         tracker = 'bytetrack.yaml',
                         verbose = False,
-                        device  = 'cpu',
+                        device  = YOLO_DEVICE,
+                        half    = YOLO_HALF,
+                        max_det = 5,
                     )
                 except Exception:
                     # Fallback jika dependency tracker ('lap'/'lapx') belum terpasang
@@ -283,11 +413,15 @@ def camera_frame():
                         frame,
                         conf    = YOLO_CONF,
                         iou     = YOLO_IOU,
-                        imgsz   = 640,
+                        imgsz   = YOLO_IMGSZ_CAMERA,
                         verbose = False,
-                        device  = 'cpu',
+                        device  = YOLO_DEVICE,
+                        half    = YOLO_HALF,
+                        max_det = 5,
                     )
 
+                # Kumpulkan raw boxes dulu, lalu NMS lintas kelas
+                raw_boxes = []
                 for result in results:
                     boxes = result.boxes
                     if boxes is None or len(boxes) == 0:
@@ -302,12 +436,18 @@ def camera_frame():
                         y2 = max(0, min(int(y2), send_h))
                         if (x2 - x1) < 20 or (y2 - y1) < 20:
                             continue
-
                         label    = YOLO_CLASS_MAP.get(cls_id, f'Kelas {cls_id}')
                         track_id = int(box.id[0]) if box.id is not None else None
+                        raw_boxes.append((conf, cls_id, label, track_id, x1, y1, x2, y2))
 
+                # NMS lintas kelas dengan area filter dan IoMin
+                raw_boxes = _nms_detections(raw_boxes, iou_thresh=0.45, frame_w=send_w, frame_h=send_h)
+
+                for (conf, cls_id, label, track_id, x1, y1, x2, y2) in raw_boxes:
                         if track_id is None:
-                            # Tracker non-aktif (fallback predict) → tampilkan langsung
+                            # Tracker non-aktif (fallback predict) → filter conf lalu tampilkan
+                            if conf < MIN_CONF_DISPLAY:
+                                continue
                             rec = RECOMMENDATIONS.get(label, {})
                             detections.append({
                                 'label':      label,
@@ -339,10 +479,19 @@ def camera_frame():
                     if not hist['labels']:
                         continue
 
-                    stable_label = Counter(hist['labels']).most_common(1)[0][0]
+                    # Weighted voting: setiap label diboboti dengan confidence-nya
+                    # → label dengan conf tinggi lebih dominan meskipun jumlah frame sama
+                    weighted_scores = defaultdict(float)
+                    for lbl, cf in zip(hist['labels'], hist['confs']):
+                        weighted_scores[lbl] += cf
+                    stable_label = max(weighted_scores, key=weighted_scores.get)
                     avg_conf     = sum(hist['confs']) / len(hist['confs'])
-                    rec          = RECOMMENDATIONS.get(stable_label, {})
 
+                    # Jangan tampilkan jika confidence rata-rata terlalu rendah
+                    if avg_conf < MIN_CONF_DISPLAY:
+                        continue
+
+                    rec = RECOMMENDATIONS.get(stable_label, {})
                     detections.append({
                         'label':      stable_label,
                         'confidence': round(avg_conf * 100, 1),
@@ -355,40 +504,48 @@ def camera_frame():
         except Exception as e:
             return jsonify({'error': f'YOLO error: {str(e)}', 'detections': []}), 200
     else:
-        # Demo mode
-        h, w = send_h, send_w
-        rec  = RECOMMENDATIONS.get('Plastik', {})
-        detections.append({
-            'label':      'Plastik',
-            'confidence': round(85 + np.random.rand() * 10, 1),
-            'bbox':       [w//4, h//4, 3*w//4, 3*h//4],
-            'color':      rec.get('color', '#06b6d4'),
-            'icon':       rec.get('icon', '♻️'),
-            'action':     rec.get('action', 'Daur Ulang'),
-        })
+        return jsonify({'error': 'Model deteksi tidak tersedia. Pastikan file model sudah ada di model/yolo/.'}), 503
 
     inference_ms = round((time.time() - t_start) * 1000)
+    device_label = 'GPU' if (isinstance(YOLO_DEVICE, int) or str(YOLO_DEVICE).startswith('cuda')) else 'CPU'
     return jsonify({
         'success':      True,
         'detections':   detections,
         'inference_ms': inference_ms,
-        'model':        'YOLOv8m' if model_yolo else 'Demo',
+        'model':        f'YOLOv8m ({device_label})',
     })
 
 
 @app.route('/api/status')
 def status():
+    device_label = 'GPU' if (isinstance(YOLO_DEVICE, int) or str(YOLO_DEVICE).startswith('cuda')) else 'CPU'
     return jsonify({
         'keras_model':   model_keras is not None,
         'yolo_model':    model_yolo is not None,
         'yolo_path':     yolo_path_used,
+        'yolo_device':   device_label,
         'classes_keras': CLASS_NAMES_KERAS,
         'classes_yolo':  list(YOLO_CLASS_MAP.values()),
-        'demo_mode':     model_keras is None and model_yolo is None,
+        'keras_loaded':  model_keras is not None,
+        'yolo_loaded':   model_yolo is not None,
     })
 
 
 # ─── Run ──────────────────────────────────────────────────────────────────────
 if __name__ == '__main__':
     load_models()
-    app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
+    warmup_models()
+
+    # DEBUG_MODE dikontrol lewat environment variable, default OFF.
+    # PENTING: debug=True mengaktifkan Werkzeug debugger interaktif yang bisa
+    # dieksploitasi untuk remote code execution kalau server ini diakses dari
+    # luar jaringan lokal (mis. lewat ngrok atau deploy ke cloud). Jangan
+    # pernah nyalakan DEBUG_MODE=1 kalau host bisa diakses publik.
+    #   Windows  : set DEBUG_MODE=1 && python app.py
+    #   Linux/Mac: DEBUG_MODE=1 python app.py
+    DEBUG_MODE = os.environ.get('DEBUG_MODE', '0') == '1'
+
+    # use_reloader=False supaya load_models()/warmup_models() tidak terpanggil
+    # dua kali (sebelumnya proses parent+child Werkzeug reloader masing-masing
+    # memuat model, kontributor lonjakan delay di awal start).
+    app.run(debug=DEBUG_MODE, host='0.0.0.0', port=5000, threaded=True, use_reloader=False)

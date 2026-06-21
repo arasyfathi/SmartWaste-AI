@@ -40,7 +40,10 @@ let animFrame     = null;
 let isRunning     = false;
 let facingMode    = 'environment';
 let lastInfer     = 0;
-let inferInterval = 500; // ms between server calls
+let inferInterval = 500; // ms antar pemanggilan server, disesuaikan otomatis di bawah
+const MIN_INTERVAL = 100;  // jangan lebih cepat dari ini meski server sangat cepat
+const MAX_INTERVAL = 2000; // jangan lebih lambat dari ini meski server sangat lambat
+let isInferring    = false; // mencegah request baru menumpuk sebelum request sebelumnya selesai
 let frameCount    = 0;
 let fpsTimer      = 0;
 let currentFps    = 0;
@@ -73,7 +76,7 @@ async function startCamera() {
     placeholder.style.display = 'none';
     liveDot.classList.add('active');
     liveText.textContent = 'LIVE';
-    camMeta.textContent  = '30 FPS &middot; YOLOv8 &middot; SmartWaste AI'.replace('&middot;', '\u00B7');
+    camMeta.textContent  = 'YOLOv8 \u00B7 SmartWaste AI';
 
     btnStart.disabled = true;
     btnStop.disabled  = false;
@@ -139,19 +142,25 @@ function loop() {
     canvas.height = video.videoHeight;
   }
 
-  // FPS counter
+  // FPS counter — INI ADALAH FPS RENDER VIDEO DI CANVAS, BUKAN kecepatan AI.
+  // Sebelumnya label ini ditampilkan sebagai "X FPS · YOLOv8" yang menyiratkan
+  // AI berjalan secepat itu, padahal AI hanya dipanggil setiap `inferInterval`
+  // ms (lihat sendFrame). Sekarang dipisah jelas: "Render" vs "AI" rate, agar
+  // tidak menyesatkan (video tetap mulus walau AI di belakang lebih lambat).
   frameCount++;
   const now = performance.now();
   if (now - fpsTimer >= 1000) {
     currentFps = frameCount;
     frameCount = 0;
     fpsTimer   = now;
-    camFps.textContent = `${currentFps} FPS`;
-    camMeta.textContent = `${currentFps} FPS \u00B7 YOLOv8 \u00B7 SmartWaste AI`;
+    const aiRate = (1000 / inferInterval).toFixed(1);
+    camFps.textContent  = `Render ${currentFps} FPS \u00B7 AI ~${aiRate}/s`;
+    camMeta.textContent = `YOLOv8 \u00B7 SmartWaste AI`;
   }
 
-  // Send to server every inferInterval ms
-  if (now - lastInfer >= inferInterval) {
+  // Send to server every inferInterval ms — tapi jangan kalau request sebelumnya
+  // masih berjalan (mencegah request menumpuk kalau server lambat)
+  if (!isInferring && now - lastInfer >= inferInterval) {
     lastInfer = now;
     sendFrame(now);
   }
@@ -165,6 +174,7 @@ async function sendFrame(t0) {
   tmp.getContext('2d').drawImage(video, 0, 0, tmp.width, tmp.height);
   const frame = tmp.toDataURL('image/jpeg', 0.7);
 
+  isInferring = true;
   try {
     const res = await fetch('/api/camera-frame', {
       method: 'POST',
@@ -176,14 +186,39 @@ async function sendFrame(t0) {
       }),
     });
     const data = await res.json();
-    const elapsed = Math.round(performance.now() - t0);
-    inferTime.textContent = `Waktu Inferensi: ${elapsed}ms`;
+    // Pakai data.inference_ms (waktu YOLO benar-benar memproses di server),
+    // bukan `elapsed` (round-trip termasuk network) — supaya angka yang
+    // ditampilkan mencerminkan kecepatan model, bukan kecepatan koneksi.
+    const serverMs = typeof data.inference_ms === 'number' ? data.inference_ms : Math.round(performance.now() - t0);
+    inferTime.textContent = `Waktu Inferensi (server): ${serverMs}ms`;
+
+    // Adaptive interval: sesuaikan jeda berikutnya dengan kecepatan server yang
+    // sebenarnya (data.inference_ms), bukan angka tetap 500ms. Kalau server lagi
+    // lambat (mis. fallback CPU), interval otomatis melebar agar tidak menumpuk.
+    if (typeof data.inference_ms === 'number') {
+      inferInterval = Math.min(MAX_INTERVAL, Math.max(MIN_INTERVAL, Math.round(data.inference_ms * 0.8)));
+    }
 
     if (data.success) {
-      drawBoxes(data.detections, tmp.width, tmp.height);
-      renderDetections(data.detections);
+      // Filter 1: hanya tampilkan deteksi confidence >= 62%
+      let filtered = (data.detections || []).filter(d => d.confidence >= 62);
+
+      // Filter 2: deduplikasi label yang sama — ambil yang confidence tertinggi per label
+      const bestByLabel = {};
+      for (const det of filtered) {
+        if (!bestByLabel[det.label] || det.confidence > bestByLabel[det.label].confidence) {
+          bestByLabel[det.label] = det;
+        }
+      }
+      filtered = Object.values(bestByLabel);
+
+      drawBoxes(filtered, tmp.width, tmp.height);
+      renderDetections(filtered);
     }
   } catch (_) { /* ignore transient errors */ }
+  finally {
+    isInferring = false;
+  }
 }
 
 // ── Draw bounding boxes ───────────────────────────────────────────────────────

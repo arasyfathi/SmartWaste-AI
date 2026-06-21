@@ -1,6 +1,38 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# requirements.txt — KHUSUS mesin dengan GPU NVIDIA RTX 5060 / Blackwell
+# (CUDA 12.8), seperti laptop developer asli project ini.
+#
+# Kalau kamu install di laptop/PC LAIN (tanpa GPU NVIDIA, GPU beda generasi,
+# atau di Mac/Linux server tanpa CUDA 12.8), file ini KEMUNGKINAN GAGAL install
+# karena build torch+cu128 spesifik. Gunakan requirements-cpu.txt sebagai
+# gantinya:
+#   pip install -r requirements-cpu.txt
+#
+# PENTING — GPU (NVIDIA RTX 5060 / Blackwell, butuh CUDA 12.8):
+# --extra-index-url di bawah memastikan `pip install -r requirements.txt`
+# menarik build torch dengan dukungan CUDA (cu128), BUKAN build CPU-only
+# default dari PyPI. Sebelumnya tanpa ini, torch+cpu ke-install otomatis
+# sebagai dependency ultralytics dan menimpa instalasi CUDA manual — itu
+# sebabnya YOLO selalu fallback ke CPU dan frame lag parah.
+#
+# Cek setelah install:
+#   python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+# Harus muncul versi diakhiri "+cu128" dan True. Kalau ternyata masih +cpu/False,
+# jalankan manual:
+#   pip uninstall torch torchvision torchaudio -y
+#   pip install torch==2.11.0 --index-url https://download.pytorch.org/whl/cu128
+#
+# CATATAN TensorFlow di Windows: sejak TF >= 2.11, GPU TIDAK didukung secara
+# native di Windows (lihat warning saat run app.py). MobileNetV2 akan selalu
+# jalan di CPU walau baris CUDA di atas sukses — itu limitasi resmi TensorFlow,
+# bukan bug di project ini. Solusi: jalankan lewat WSL2 jika ingin TF pakai GPU.
+# ─────────────────────────────────────────────────────────────────────────────
+--extra-index-url https://download.pytorch.org/whl/cu128
+
 flask>=3.0.0
 numpy>=1.24.0
 pillow>=10.0.0
 opencv-python>=4.8.0
 tensorflow>=2.13.0
+torch==2.11.0+cu128
 ultralytics>=8.0.0

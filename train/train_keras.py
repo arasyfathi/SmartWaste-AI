@@ -6,8 +6,8 @@ Cara pakai:
   python train_keras.py
 
 Output:
-  model/smartwaste_model.h5
-  model/class_indices.json
+  model/classification/smartwaste_mobilenetv2.keras
+  model/classification/class_indices.json
 """
 
 import os
@@ -23,14 +23,20 @@ from tensorflow.keras.callbacks import (
 
 # ─── Konfigurasi ──────────────────────────────────────────────────────────────
 DATA_DIR     = 'datasets/garbage'
-MODEL_OUTPUT = 'model/smartwaste_model.h5'
+# PENTING: path & format ini HARUS SAMA dengan MODEL_PATH_KERAS di app.py
+# (model/classification/smartwaste_mobilenetv2.keras). Sebelumnya script ini
+# menyimpan ke 'model/smartwaste_model.h5' — path & ekstensi berbeda dari yang
+# dipakai app.py, sehingga model hasil training ulang TIDAK PERNAH otomatis
+# terpakai oleh web app (app.py tetap memuat model lama tanpa ada error).
+MODEL_OUTPUT      = 'model/classification/smartwaste_mobilenetv2.keras'
+CLASS_INDICES_OUT = 'model/classification/class_indices.json'
 IMG_SIZE     = 224
 BATCH_SIZE   = 32
 EPOCHS_FT1   = 15   # Tahap 1: head only
 EPOCHS_FT2   = 20   # Tahap 2: fine-tune top layers
 VAL_SPLIT    = 0.2
 
-os.makedirs('model', exist_ok=True)
+os.makedirs(os.path.dirname(MODEL_OUTPUT), exist_ok=True)
 os.makedirs('logs', exist_ok=True)
 
 
@@ -204,11 +210,11 @@ def train():
     print(f"  Validation Accuracy: {acc * 100:.2f}%")
 
     # Simpan class indices
-    with open('model/class_indices.json', 'w') as f:
+    with open(CLASS_INDICES_OUT, 'w') as f:
         json.dump(train_ds.class_indices, f, indent=2, ensure_ascii=False)
 
     print(f"\n[✓] Model disimpan   : {MODEL_OUTPUT}")
-    print(f"[✓] Class indices    : model/class_indices.json")
+    print(f"[✓] Class indices    : {CLASS_INDICES_OUT}")
     print("\n✅ Training selesai!")
 
 

@@ -43,15 +43,15 @@
       MobileNetV2 akurasi tinggi untuk masa depan lingkungan yang lebih baik.
     </p>
     <div class="hero-actions">
-      <a href="/klasifikasi" class="btn-primary">
+      <a href="{{ url_for('klasifikasi') }}" class="btn-primary">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg>
         Mulai Klasifikasi
       </a>
-      <a href="/camera" class="btn-secondary">
+      <a href="{{ url_for('camera') }}" class="btn-secondary">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="currentColor" opacity="0.4"/></svg>
         Coba Kamera Live
       </a>
-      <a href="/about" class="btn-ghost">
+      <a href="{{ url_for('about') }}" class="btn-ghost">
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 7c-2-1.5-4.5-2-7-2v13c2.5 0 5 .5 7 2 2-1.5 4.5-2 7-2V5c-2.5 0-5 .5-7 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="currentColor" fill-opacity="0.08"/><line x1="12" y1="7" x2="12" y2="20" stroke="currentColor" stroke-width="2"/></svg>
         Pelajari Lebih
       </a>
@@ -61,18 +61,18 @@
   <!-- ── Stats Bar ─────────────────────────────────────────────────────────── -->
   <div class="stats-bar fade-up">
     <div class="stat">
-      <span class="stat-num">65.4%</span>
-      <span class="stat-label">YOLO mAP50</span>
+      <span class="stat-num" data-counter="90.02" data-suffix="%">90.02%</span>
+      <span class="stat-label">AKURASI KLASIFIKASI</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-num">90.02%</span>
-      <span class="stat-label">MOBILENETV2 ACC.</span>
+      <span class="stat-num">YOLOv8</span>
+      <span class="stat-label">DETEKSI REAL-TIME</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
-      <span class="stat-num">5</span>
-      <span class="stat-label">KATEGORI</span>
+      <span class="stat-num" data-counter="5">5</span>
+      <span class="stat-label">KATEGORI SAMPAH</span>
     </div>
     <div class="stat-divider"></div>
     <div class="stat">
@@ -82,7 +82,7 @@
     <div class="stat-divider"></div>
     <div class="stat">
       <span class="stat-num">15K+</span>
-      <span class="stat-label">DATA TRAINING</span>
+      <span class="stat-label">DATASET TRAINING</span>
     </div>
   </div>
 </section>
@@ -160,29 +160,61 @@
       <h2 class="section-title">Empat langkah, <span>satu tujuan</span></h2>
     </div>
 
-    <div class="steps-wrap fade-up fade-up-delay-1">
-      <div class="step-item">
-        <div class="step-circle">01</div>
-        <strong>Upload Gambar</strong>
-        <p>Pilih foto sampah dari perangkatmu</p>
+    <div class="steps-wrap-3d fade-up fade-up-delay-1">
+      <div class="step-card-3d" data-step="1">
+        <div class="step-card-3d-inner">
+          <div class="step-3d-glow"></div>
+          <div class="step-icon-3d">
+            <div class="step-icon-3d-face">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 16V4M12 4l-4 4M12 4l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="step-num-3d">01</div>
+          <strong>Upload Gambar</strong>
+          <p>Pilih foto sampah dari perangkatmu</p>
+        </div>
       </div>
-      <div class="step-connector"></div>
-      <div class="step-item">
-        <div class="step-circle">02</div>
-        <strong>AI Analisis</strong>
-        <p>Model deep learning memproses gambar</p>
+      <div class="step-connector-3d"><span></span><span></span><span></span></div>
+      <div class="step-card-3d" data-step="2">
+        <div class="step-card-3d-inner">
+          <div class="step-3d-glow"></div>
+          <div class="step-icon-3d">
+            <div class="step-icon-3d-face">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="step-num-3d">02</div>
+          <strong>AI Analisis</strong>
+          <p>Model deep learning memproses gambar</p>
+        </div>
       </div>
-      <div class="step-connector"></div>
-      <div class="step-item">
-        <div class="step-circle">03</div>
-        <strong>Prediksi</strong>
-        <p>Kategori sampah teridentifikasi</p>
+      <div class="step-connector-3d"><span></span><span></span><span></span></div>
+      <div class="step-card-3d" data-step="3">
+        <div class="step-card-3d-inner">
+          <div class="step-3d-glow"></div>
+          <div class="step-icon-3d">
+            <div class="step-icon-3d-face">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 12.5l2.5 2.5L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+          </div>
+          <div class="step-num-3d">03</div>
+          <strong>Prediksi</strong>
+          <p>Kategori sampah teridentifikasi</p>
+        </div>
       </div>
-      <div class="step-connector"></div>
-      <div class="step-item">
-        <div class="step-circle">04</div>
-        <strong>Rekomendasi</strong>
-        <p>Dapatkan saran pengelolaan tepat</p>
+      <div class="step-connector-3d"><span></span><span></span><span></span></div>
+      <div class="step-card-3d" data-step="4">
+        <div class="step-card-3d-inner">
+          <div class="step-3d-glow"></div>
+          <div class="step-icon-3d">
+            <div class="step-icon-3d-face">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z" fill="currentColor"/><path d="M19 14l.75 2.25L22 17l-2.25.75L19 20l-.75-2.25L16 17l2.25-.75L19 14z" fill="currentColor" opacity="0.6"/></svg>
+            </div>
+          </div>
+          <div class="step-num-3d">04</div>
+          <strong>Rekomendasi</strong>
+          <p>Dapatkan saran pengelolaan tepat</p>
+        </div>
       </div>
     </div>
   </section>
@@ -199,11 +231,11 @@
   </div>
 
   <div class="chips-wrap fade-up fade-up-delay-1">
-    <span class="chip"><span class="chip-dot" style="--c:#3b82f6"></span> Plastik</span>
-    <span class="chip"><span class="chip-dot" style="--c:#8b5cf6"></span> Kertas</span>
-    <span class="chip"><span class="chip-dot" style="--c:#06b6d4"></span> Kaca</span>
-    <span class="chip"><span class="chip-dot" style="--c:#f59e0b"></span> Logam</span>
-    <span class="chip"><span class="chip-dot" style="--c:#22c55e"></span> Organik</span>
+    <span class="chip"><span class="chip-dot" style="--c:#06b6d4"></span> Plastik</span>
+    <span class="chip"><span class="chip-dot" style="--c:#f59e0b"></span> Kertas</span>
+    <span class="chip"><span class="chip-dot" style="--c:#8b5cf6"></span> Kaca</span>
+    <span class="chip"><span class="chip-dot" style="--c:#10d9a0"></span> Logam</span>
+    <span class="chip"><span class="chip-dot" style="--c:#4ade80"></span> Organik</span>
   </div>
 </section>
 
