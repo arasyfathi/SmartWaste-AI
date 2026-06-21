@@ -6,7 +6,12 @@ runs/
 logs/
 uploads/
 
-*.h5
+*.keras
 *.pt
 
 .vscode/
+
+credentials.json
+token.json
+
+riwayat.jsonl

@@ -55,6 +55,8 @@ Menggunakan YOLOv8 dan OpenCV untuk mendeteksi objek sampah secara langsung mela
 
 Selain memberikan hasil prediksi, sistem juga menampilkan rekomendasi pengelolaan sampah sesuai kategori yang terdeteksi.
 
+Setiap gambar yang diklasifikasikan lewat halaman Klasifikasi otomatis diupload ke Google Drive (proses background, tidak menunda response) dan dicatat di `riwayat.jsonl` sebagai log riwayat prediksi.
+
 ---
 
 # 🌍 Latar Belakang
@@ -76,7 +78,13 @@ SmartWaste AI dikembangkan sebagai solusi edukatif berbasis Artificial Intellige
 ```
 smartwaste_ai/
 ├── app.py                  # Flask backend
-├── requirements.txt        # Dependencies
+├── drive_storage.py        # Upload hasil prediksi ke Google Drive (async)
+├── auth_setup.py           # Generate token.json OAuth Google Drive (sekali jalan)
+├── requirements.txt        # Dependencies (GPU/CUDA 12.8)
+├── requirements-cpu.txt    # Dependencies (CPU-only, tanpa GPU NVIDIA)
+├── riwayat.jsonl           # Log riwayat prediksi + link Google Drive (auto-generated)
+├── credentials.json        # OAuth client secret Google (JANGAN di-commit, sudah di .gitignore)
+├── token.json               # OAuth token Google Drive (JANGAN di-commit, sudah di .gitignore)
 │
 ├── train/
 │   ├── train_keras.py      # Training MobileNetV2
@@ -162,6 +170,24 @@ python train/train_yolo.py
 Output: `model/yolo/smartwaste_yolo.pt`
 
 **Hasil training:** mAP50 = 0.654, mAP50-95 = 0.456 (lihat tabel metrik lengkap di bagian [Hasil Pelatihan Model](#-hasil-pelatihan-model))
+
+---
+
+## ☁️ Integrasi Google Drive (riwayat prediksi)
+
+Setiap kali endpoint `/api/predict` dipanggil, gambar yang diupload otomatis dikirim ke Google Drive (lewat `drive_storage.py`, berjalan di background thread agar tidak menunda response API), lalu hasilnya (`prediction`, `confidence`, link Drive) dicatat sebagai satu baris JSON di `riwayat.jsonl`.
+
+**Setup OAuth (sekali saja, sebelum pertama kali jalan):**
+```bash
+python auth_setup.py
+```
+Script ini akan membuka browser untuk login Google, lalu menghasilkan `token.json` (dipakai otomatis oleh `drive_storage.py` setiap aplikasi jalan, termasuk auto-refresh token).
+
+**Diperlukan:**
+- `credentials.json` (OAuth client secret dari Google Cloud Console) — letakkan di root project
+- (Opsional) environment variable `DRIVE_FOLDER_ID` untuk menentukan folder tujuan upload di Drive
+
+> ⚠️ `credentials.json` dan `token.json` berisi kredensial sensitif — sudah masuk `.gitignore`, jangan pernah commit ke repository publik.
 
 ---
 
