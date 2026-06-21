@@ -34,7 +34,6 @@ Dikembangkan oleh Mahasiswa Telkom University
 - [🚀 Cara Penggunaan](#-cara-penggunaan)
 - [📈 Hasil Pelatihan Model](#-hasil-pelatihan-model)
 - [🖼 Tampilan Aplikasi](#-tampilan-aplikasi)
-- [🔮 Pengembangan Selanjutnya](#-pengembangan-selanjutnya)
 - [👨‍💻 Tim Pengembang](#-tim-pengembang)
 - [📜 Lisensi](#-lisensi)
 
@@ -448,19 +447,6 @@ Tambahkan screenshot berikut ke folder assets:
 * Camera Detection
 * About Page
 * YOLO Detection Result
-
----
-
-# 🔮 Pengembangan Selanjutnya
-
-* Mobile Application Version
-* Smart Bin Integration
-* Cloud Deployment
-* Waste Volume Estimation
-* Multi-Language Support
-* User Authentication
-* Detection History
-* AI Analytics Dashboard
 
 ---
 
