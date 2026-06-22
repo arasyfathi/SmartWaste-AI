@@ -12,11 +12,19 @@ from PIL import Image
 import cv2
 import uuid
 from datetime import datetime
-from drive_storage import upload_to_drive_async
 
 app = Flask(__name__)
 CORS(app)  # Allow cross-origin requests from React frontend
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max upload
+
+# ─── Drive storage (optional — gracefully skip if not configured) ────────────
+try:
+    from drive_storage import upload_to_drive_async
+    DRIVE_ENABLED = True
+except Exception:
+    DRIVE_ENABLED = False
+    upload_to_drive_async = None
+    print("[!] Drive storage not available — predictions will not be uploaded to Drive")
 
 # ─── File validation ─────────────────────────────────────────────────────────
 ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp'}
@@ -37,9 +45,16 @@ except ImportError:
     print("[!] PyTorch tidak ditemukan - fallback ke CPU")
 
 # ─── Configuration ───────────────────────────────────────────────────────────
-# Model paths relative to backend/ directory (models are in ../model/)
+# Model paths: check both local dev (../model/) and Docker/HF (/app/model/)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_DIR = os.path.join(BASE_DIR, '..', 'model')
+
+# Try multiple model directory locations
+_MODEL_DIR_CANDIDATES = [
+    os.path.join(BASE_DIR, '..', 'model'),      # local dev: backend/ → model/
+    os.path.join(BASE_DIR, 'model'),             # Docker/HF: /app/model/
+    os.path.join(os.getcwd(), 'model'),          # fallback: cwd/model/
+]
+MODEL_DIR = next((d for d in _MODEL_DIR_CANDIDATES if os.path.isdir(d)), _MODEL_DIR_CANDIDATES[0])
 
 MODEL_PATH_KERAS = os.path.join(MODEL_DIR, 'classification', 'smartwaste_mobilenetv2.keras')
 IMG_SIZE = 224
@@ -47,6 +62,7 @@ IMG_SIZE = 224
 YOLO_CANDIDATES = [
     os.path.join(MODEL_DIR, 'yolo', 'smartwaste_yolo.pt'),
     os.path.join(MODEL_DIR, 'smartwaste_yolo.pt'),
+    os.path.join(MODEL_DIR, 'classification', 'smartwaste_yolo.pt'),
 ]
 MODEL_PATH_YOLO = next((p for p in YOLO_CANDIDATES if os.path.exists(p)), None)
 
@@ -303,25 +319,29 @@ def predict():
     except Exception as e:
         return jsonify({'error': f'Prediksi gagal: {str(e)}'}), 500
 
-    # Upload to Google Drive (background)
-    ext = os.path.splitext(file.filename)[1].lower()
-    riwayat_path = os.path.join(BASE_DIR, 'riwayat.jsonl')
-    drive_filename = f"{datetime.now():%Y%m%d_%H%M%S}_{uuid.uuid4().hex[:8]}{ext}"
+    # Upload to Google Drive (background) — only if Drive is configured
+    if DRIVE_ENABLED:
+        ext = os.path.splitext(file.filename)[1].lower()
+        riwayat_path = os.path.join(BASE_DIR, 'riwayat.jsonl')
+        drive_filename = f"{datetime.now():%Y%m%d_%H%M%S}_{uuid.uuid4().hex[:8]}{ext}"
 
-    def _log_drive_upload(file_id, link):
-        if file_id:
-            entry = {
-                'filename': drive_filename,
-                'drive_file_id': file_id,
-                'drive_link': link,
-                'prediction': label,
-                'confidence': round(confidence * 100, 1),
-                'timestamp': datetime.now().isoformat(),
-            }
-            with open(riwayat_path, 'a') as f:
-                f.write(json.dumps(entry) + '\n')
+        def _log_drive_upload(file_id, link):
+            if file_id:
+                entry = {
+                    'filename': drive_filename,
+                    'drive_file_id': file_id,
+                    'drive_link': link,
+                    'prediction': label,
+                    'confidence': round(confidence * 100, 1),
+                    'timestamp': datetime.now().isoformat(),
+                }
+                try:
+                    with open(riwayat_path, 'a') as f:
+                        f.write(json.dumps(entry) + '\n')
+                except Exception:
+                    pass
 
-    upload_to_drive_async(img_bytes, drive_filename, file.mimetype, on_done=_log_drive_upload)
+        upload_to_drive_async(img_bytes, drive_filename, file.mimetype, on_done=_log_drive_upload)
 
     rec = RECOMMENDATIONS.get(label, {})
     return jsonify({

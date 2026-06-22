@@ -47,6 +47,10 @@ def _is_retryable(e):
 
 def upload_to_drive(file_bytes, filename, mimetype='image/jpeg'):
     """Upload bytes gambar ke Google Drive, dengan retry otomatis."""
+    if not os.path.exists(TOKEN_PATH):
+        print(f"[!] token.json tidak ditemukan di {TOKEN_PATH} — skip upload ke Drive")
+        return None, None
+
     last_error = None
 
     for attempt in range(1, MAX_RETRIES + 1):
