@@ -10,6 +10,7 @@ build/
 # Frontend
 frontend/node_modules/
 frontend/dist/
+frontend/smartwaste/
 
 # Backend
 backend/__pycache__/
