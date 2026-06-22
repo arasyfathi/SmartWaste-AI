@@ -547,9 +547,10 @@ def debug():
 
 
 # ─── Run ─────────────────────────────────────────────────────────────────────
-if __name__ == '__main__':
-    load_models()
-    warmup_models()
+# Load models at import time (needed for gunicorn / production servers)
+load_models()
+warmup_models()
 
+if __name__ == '__main__':
     DEBUG_MODE = os.environ.get('DEBUG_MODE', '0') == '1'
     app.run(debug=DEBUG_MODE, host='0.0.0.0', port=5000, threaded=True, use_reloader=False)
