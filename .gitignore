@@ -41,3 +41,8 @@ riwayat.jsonl
 # OS
 .DS_Store
 Thumbs.db
+
+# Screenshots / temp images at root
+/space_*.png
+/*.jpg
+/*.jpeg

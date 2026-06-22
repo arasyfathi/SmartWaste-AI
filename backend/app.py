@@ -153,10 +153,26 @@ inference_lock = threading.Lock()
 model_yolo = None
 model_keras = None
 yolo_path_used = None
+_model_debug = {}  # stores diagnostic info for debugging
 
 
 def load_models():
-    global model_yolo, model_keras, yolo_path_used
+    global model_yolo, model_keras, yolo_path_used, _model_debug
+
+    _model_debug['model_dir'] = MODEL_DIR
+    _model_debug['model_dir_exists'] = os.path.isdir(MODEL_DIR)
+    _model_debug['keras_path'] = MODEL_PATH_KERAS
+    _model_debug['keras_exists'] = os.path.exists(MODEL_PATH_KERAS)
+    _model_debug['yolo_candidates'] = YOLO_CANDIDATES
+    _model_debug['yolo_exists'] = {p: os.path.exists(p) for p in YOLO_CANDIDATES}
+
+    # List model dir contents if it exists
+    if os.path.isdir(MODEL_DIR):
+        _model_debug['model_dir_contents'] = os.listdir(MODEL_DIR)
+        for sub in ['classification', 'yolo']:
+            sub_path = os.path.join(MODEL_DIR, sub)
+            if os.path.isdir(sub_path):
+                _model_debug[f'{sub}_contents'] = os.listdir(sub_path)
 
     # Load YOLOv8
     for yolo_path in YOLO_CANDIDATES:
@@ -166,24 +182,32 @@ def load_models():
                 model_yolo = YOLO(yolo_path)
                 model_yolo.to(YOLO_DEVICE)
                 yolo_path_used = yolo_path
+                _model_debug['yolo_status'] = f'loaded from {yolo_path}'
                 print(f"[OK] YOLOv8 model loaded: {yolo_path} (device={YOLO_DEVICE})")
                 break
             except Exception as e:
+                _model_debug['yolo_error'] = str(e)
                 print(f"[X] YOLOv8 load error ({yolo_path}): {e}")
 
     if not model_yolo:
+        _model_debug.setdefault('yolo_status', 'not loaded')
         print("[!] YOLOv8 model tidak ditemukan - camera akan pakai demo mode")
 
     # Load Keras model
     if os.path.exists(MODEL_PATH_KERAS):
         try:
             import tensorflow as tf
+            _model_debug['tf_version'] = tf.__version__
             model_keras = tf.keras.models.load_model(MODEL_PATH_KERAS)
+            _model_debug['keras_status'] = 'loaded'
             print(f"[OK] Keras model loaded: {MODEL_PATH_KERAS}")
         except Exception as e:
+            _model_debug['keras_error'] = str(e)
+            _model_debug['keras_status'] = f'error: {e}'
             print(f"[X] Keras load error: {e}")
     else:
-        print("[!] Keras model tidak ditemukan - klasifikasi akan pakai demo mode")
+        _model_debug['keras_status'] = 'file not found'
+        print(f"[!] Keras model tidak ditemukan di {MODEL_PATH_KERAS} - klasifikasi akan pakai demo mode")
 
 
 def preprocess_image(img_array):
@@ -504,6 +528,22 @@ def status():
 @app.route('/api/health')
 def health():
     return jsonify({'status': 'ok'})
+
+
+# ─── Root route (for HF Spaces iframe) ───────────────────────────────────────
+@app.route('/')
+def root():
+    return jsonify({
+        'app': 'SmartWaste AI Backend',
+        'status': 'running',
+        'endpoints': ['/api/predict', '/api/camera-frame', '/api/status', '/api/health', '/api/debug'],
+    })
+
+
+# ─── Debug endpoint (diagnostic info for model loading) ──────────────────────
+@app.route('/api/debug')
+def debug():
+    return jsonify(_model_debug)
 
 
 # ─── Run ─────────────────────────────────────────────────────────────────────
