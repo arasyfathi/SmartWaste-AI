@@ -4,6 +4,9 @@
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
 ![Flask](https://img.shields.io/badge/Flask-3.0-green)
+![React](https://img.shields.io/badge/React-19-61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6)
+![Vite](https://img.shields.io/badge/Vite-6-purple)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.13%2B-orange)
 ![YOLOv8](https://img.shields.io/badge/YOLOv8m-Ultralytics-red)
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-purple)
@@ -76,6 +79,7 @@ SmartWaste AI dikembangkan sebagai solusi edukatif berbasis AI untuk membantu ma
 - **Log riwayat prediksi** di `riwayat.jsonl` (prediction, confidence, timestamp, link Drive)
 - **Deteksi GPU otomatis** — YOLO pakai GPU (CUDA) jika tersedia, fallback CPU jika tidak
 - **Validasi file server-side** — tipe & ukuran file divalidasi di backend (bukan hanya di JS)
+- **Frontend modern React + TypeScript** — UI responsif, komponen modular, dan pengalaman pengguna yang cepat dengan Vite
 
 ---
 
@@ -145,7 +149,7 @@ Kedua model menggunakan **5 kelas yang sama**:
 | biological, organic, food | → | Organik |
 | clothes, shoes, trash | → | *(dibuang / tidak digunakan)* |
 
-> ⚠️ Kelas `clothes`, `shoes`, dan `trash` **tidak disertakan** dalam training. Menyertakannya akan menghasilkan 6 kelas yang tidak cocok dengan `CLASS_NAMES_KERAS` di `app.py` (silent bug).
+> ⚠️ Kelas `clothes`, `shoes`, dan `trash` **tidak disertakan** dalam training. Menyertakannya akan menghasilkan 6 kelas yang tidak cocok dengan `CLASS_NAMES_KERAS` di `backend/app.py` (silent bug).
 
 ---
 
@@ -180,22 +184,30 @@ Kedua model menggunakan **5 kelas yang sama**:
 
 # 🏗 Arsitektur Sistem
 
+Proyek ini menggunakan arsitektur **frontend-backend terpisah** (decoupled):
+
 ```
-Browser
+Frontend (React + Vite, port 3000)
   │
-  ├── GET /                  → index.html     (Home)
-  ├── GET /klasifikasi       → klasifikasi.html
-  │     └── POST /api/predict          ← multipart/form-data (gambar)
-  │           ├── MobileNetV2 inference (TF/Keras)
-  │           ├── upload_to_drive_async() [background thread]
-  │           └── append riwayat.jsonl
-  │
-  ├── GET /camera            → camera.html
-  │     └── POST /api/camera-frame     ← JSON {image: base64}
-  │           └── YOLOv8m inference (PyTorch/Ultralytics)
-  │
-  └── GET /about             → about.html
+  ├── /                      → Home Page
+  ├── /klasifikasi           → Upload gambar → POST /api/predict
+  │                              ├── MobileNetV2 inference (TF/Keras)
+  │                              ├── upload_to_drive_async() [background thread]
+  │                              └── append riwayat.jsonl
+  ├── /camera                → WebRTC stream → POST /api/camera-frame
+  │                              └── YOLOv8m inference (PyTorch/Ultralytics)
+  └── /about                 → About Page
+
+  ↕ HTTP (JSON / multipart) — via VITE_API_URL
+
+Backend (Flask, port 5000)
+  ├── POST /api/predict          ← multipart/form-data (gambar)
+  ├── POST /api/camera-frame     ← JSON {image: base64}
+  ├── GET  /api/status           ← status model
+  └── GET  /api/health           ← health check
 ```
+
+Frontend berkomunikasi dengan backend melalui REST API. CORS diaktifkan di backend (`flask-cors`) agar request lintas origin dari frontend dev server dapat diterima.
 
 ---
 
@@ -203,13 +215,15 @@ Browser
 
 | Layer | Teknologi |
 |-------|-----------|
-| Backend | Python 3.11+, Flask 3.0 |
+| Frontend | React 19, TypeScript 5.8, Vite 6, react-router-dom v7 |
+| Backend | Python 3.11+, Flask 3.0, flask-cors |
 | AI — Klasifikasi | TensorFlow 2.13+, Keras, MobileNetV2 |
 | AI — Deteksi | PyTorch (CUDA 12.8 / CPU), Ultralytics YOLOv8m |
 | Computer Vision | OpenCV 4.8+ |
-| Frontend | HTML/CSS/JS (Vanilla), WebRTC (kamera) |
+| Kamera | WebRTC API (browser-native) |
 | Storage | Google Drive API v3 (OAuth 2.0) |
-| Deployment | Render / Railway (rekomendasi), atau lokal |
+| Deployment Frontend | Vercel |
+| Deployment Backend | Render / Railway (rekomendasi) |
 
 ---
 
@@ -217,57 +231,78 @@ Browser
 
 ```
 smartwaste_ai/
-├── app.py                      # Flask backend utama (routing, inference, log)
-├── drive_storage.py            # Upload async ke Google Drive (background thread)
-├── auth_setup.py               # Generate token.json OAuth Google Drive (sekali jalan)
-├── requirements.txt            # Dependencies GPU (CUDA 12.8, RTX 5060 / Blackwell)
-├── requirements-cpu.txt        # Dependencies CPU-only (tanpa GPU NVIDIA)
-├── riwayat.jsonl               # Log riwayat prediksi + link Drive (auto-generated)
-├── credentials.json            # OAuth client secret Google (⚠️ jangan commit)
-├── token.json                  # OAuth token Google Drive (⚠️ jangan commit)
+├── frontend/                          # React + Vite frontend (TypeScript)
+│   ├── index.html                     # Entry HTML (Google Fonts, favicon)
+│   ├── package.json                   # Dependencies (react, react-router-dom, vite)
+│   ├── vite.config.ts                 # Vite config (port 3000)
+│   ├── tsconfig.json                  # TypeScript config
+│   ├── vercel.json                    # Vercel routing + API proxy
+│   ├── .env.example                   # Template env (VITE_API_URL)
+│   ├── public/
+│   │   └── images/                    # Aset gambar (logo institusi)
+│   └── src/
+│       ├── main.tsx                   # Entry point (ReactDOM, BrowserRouter)
+│       ├── App.tsx                    # Route definitions
+│       ├── components/
+│       │   ├── layout/                # Navbar, Footer, Layout, BackgroundOrnaments
+│       │   ├── home/                  # StatsBar, FeaturesGrid, HowItWorks, WasteCategories
+│       │   └── klasifikasi/           # UploadPanel, ResultsPanel, TipsRow
+│       ├── hooks/
+│       │   └── useCamera.ts           # WebRTC + real-time detection hook
+│       ├── lib/
+│       │   ├── api.ts                 # API client (predict, cameraFrame, getStatus)
+│       │   ├── constants.ts           # CLASS_NAMES, COLORS, RECOMMENDATIONS
+│       │   └── icons.tsx              # EmojiToIcon, SVG icon components
+│       ├── pages/
+│       │   ├── Home.tsx               # Home Page
+│       │   ├── Klasifikasi.tsx        # Classification Page
+│       │   ├── Camera.tsx             # Real-Time Camera Page
+│       │   └── About.tsx              # About Page
+│       └── styles/
+│           └── globals.css            # Seluruh styling (ported dari static/css/style.css)
 │
-├── train/
-│   ├── prepare_dataset.py      # Preprocessing & remap dataset Kaggle (12 → 5 kelas)
-│   ├── train_keras.py          # Training MobileNetV2 (2 tahap: head + fine-tune)
-│   ├── train_yolo.py           # Training YOLOv8m (100 epoch, resume support)
-│   ├── evaluate_keras.py       # Evaluasi model Keras (classification report)
-│   └── cek_model.py            # Verifikasi model (cek path & kelas)
+├── backend/                           # Flask backend (API only)
+│   ├── app.py                         # Flask app (routing, inference, log)
+│   ├── drive_storage.py               # Upload async ke Google Drive (background thread)
+│   ├── auth_setup.py                  # Generate token.json OAuth Google Drive
+│   ├── requirements.txt               # Dependencies GPU (CUDA 12.8)
+│   └── requirements-cpu.txt           # Dependencies CPU-only
 │
-├── model/
+├── model/                             # Model AI (shared oleh backend)
 │   ├── classification/
-│   │   ├── smartwaste_mobilenetv2.keras   # Model MobileNetV2 (5 kelas)
+│   │   ├── smartwaste_mobilenetv2.keras   # MobileNetV2 (5 kelas)
 │   │   └── class_indices.json             # Mapping index → nama kelas Keras
 │   └── yolo/
-│       ├── smartwaste_yolo.pt             # Model YOLOv8m (5 kelas, hasil remap)
-│       ├── data.yaml                      # Konfigurasi dataset YOLO (5 kelas)
-│       ├── dataset.txt                    # Ringkasan mapping kelas & statistik dataset
+│       ├── smartwaste_yolo.pt             # YOLOv8m (5 kelas, hasil remap)
+│       ├── data.yaml                      # Konfigurasi dataset YOLO
+│       ├── dataset.txt                    # Ringkasan mapping & statistik dataset
 │       ├── README.dataset.txt             # Dokumentasi dataset asli (Roboflow)
 │       └── README.roboflow.txt            # Info ekspor Roboflow
 │
-├── reports/
+├── train/                             # Script training model
+│   ├── prepare_dataset.py             # Preprocessing & remap dataset Kaggle (12 → 5)
+│   ├── train_keras.py                 # Training MobileNetV2 (2 tahap)
+│   ├── train_yolo.py                  # Training YOLOv8m (100 epoch, resume support)
+│   ├── evaluate_keras.py              # Evaluasi model Keras (classification report)
+│   └── cek_model.py                   # Verifikasi model (cek path & kelas)
+│
+├── reports/                           # Laporan & grafik pelatihan
 │   ├── mobilenet/
-│   │   ├── confusion_matrix.png           # Confusion matrix MobileNetV2
-│   │   └── training_history.png           # Kurva loss & accuracy training
+│   │   ├── confusion_matrix.png
+│   │   └── training_history.png
 │   └── yolov8/
 │       ├── confusion_matrix_20260619_1412.png
 │       ├── confusion_matrix_normalized_20260619_1412.png
 │       └── training_history_20260619_1412.png
 │
-├── templates/
-│   ├── base.html               # Layout utama (navbar, footer)
-│   ├── index.html              # Home Page
-│   ├── klasifikasi.html        # Classification Page (upload + prediksi)
-│   ├── camera.html             # Camera Real-Time Page (WebRTC + YOLO)
-│   └── about.html              # About Page (info proyek & tim)
-│
-└── static/
-    ├── css/style.css           # Semua style (satu file)
-    ├── images/                 # Aset gambar (logo institusi)
-    └── js/
-        ├── main.js             # Navbar & utilitas global
-        ├── klasifikasi.js      # Upload & predict logic (validasi client-side)
-        └── camera.js           # WebRTC stream & YOLO real-time
+├── riwayat.jsonl                      # Log riwayat prediksi + link Drive (auto-generated)
+├── credentials.json                   # OAuth client secret Google (⚠️ jangan commit)
+├── token.json                         # OAuth token Google Drive (⚠️ jangan commit)
+├── LICENSE
+└── README.md
 ```
+
+> **Catatan:** Folder `static/`, `templates/`, `app.py`, `drive_storage.py`, `auth_setup.py`, `requirements*.txt` di root adalah **legacy code** sebelum migrasi ke arsitektur terpisah dan dapat dihapus atau diabaikan.
 
 ---
 
@@ -276,15 +311,23 @@ smartwaste_ai/
 ## Prasyarat
 
 - Python 3.11+
+- Node.js 18+ (untuk frontend)
 - Git
 - (Opsional) GPU NVIDIA dengan CUDA 12.8 untuk performa YOLO optimal
 
 ## Langkah Instalasi
 
+### 1. Clone Repository
+
 ```bash
-# 1. Clone repository
 git clone https://github.com/arasyfathi/SmartWaste-AI.git
 cd SmartWaste-AI
+```
+
+### 2. Setup Backend
+
+```bash
+cd backend
 ```
 
 ```bash
@@ -298,27 +341,53 @@ pip install -r requirements-cpu.txt
 > ⚠️ `requirements.txt` menggunakan build PyTorch khusus `cu128` untuk NVIDIA Blackwell (RTX 5060+). Jika dijalankan di mesin lain, gunakan `requirements-cpu.txt`.
 
 ```bash
-# 3. Verifikasi CUDA (opsional, hanya jika install requirements.txt)
+# Verifikasi CUDA (opsional, hanya jika install requirements.txt)
 python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
 # Output yang diharapkan: 2.11.0+cu128 True
 ```
 
 ```bash
-# 4. Setup Google Drive OAuth (wajib, hanya sekali)
-# Letakkan credentials.json dari Google Cloud Console di root project, lalu:
+# Setup Google Drive OAuth (wajib, hanya sekali)
+# Letakkan credentials.json dari Google Cloud Console di folder backend/, lalu:
 python auth_setup.py
-# Browser akan terbuka untuk login Google → menghasilkan token.json
+# Browser akan terbuka untuk login Google → menghasilkan token.json di folder backend/
 ```
 
 ```bash
-# 5. Jalankan aplikasi
+# Jalankan backend
 python app.py
 ```
 
-Akses aplikasi di:
+Backend akan berjalan di:
 
 ```
 http://localhost:5000
+```
+
+### 3. Setup Frontend
+
+Buka terminal baru (jangan tutup terminal backend):
+
+```bash
+cd frontend
+npm install
+```
+
+```bash
+# (Opsional) Buat file .env jika backend berjalan di URL berbeda
+cp .env.example .env
+# Edit VITE_API_URL jika perlu (default: http://localhost:5000)
+```
+
+```bash
+# Jalankan frontend dev server
+npm run dev
+```
+
+Frontend akan berjalan di:
+
+```
+http://localhost:3000
 ```
 
 ---
@@ -392,14 +461,14 @@ Output: `model/yolo/smartwaste_yolo.pt` (di-copy dari `runs/detect/smartwaste_yo
 
 ## Klasifikasi Gambar
 
-1. Buka halaman **Klasifikasi** (`/klasifikasi`)
+1. Buka halaman **Klasifikasi** (`/klasifikasi`) di frontend
 2. Upload foto sampah (JPG, PNG, WebP, maks 10MB)
 3. Klik **Prediksi**
 4. Lihat hasil: kategori, confidence score per kelas, dan rekomendasi pengelolaan
 
 ## Deteksi Real-Time
 
-1. Buka halaman **Camera** (`/camera`)
+1. Buka halaman **Camera** (`/camera`) di frontend
 2. Izinkan akses webcam di browser
 3. Arahkan kamera ke objek sampah
 4. Sistem mendeteksi secara real-time dengan bounding box, label, dan confidence score
@@ -408,15 +477,14 @@ Output: `model/yolo/smartwaste_yolo.pt` (di-copy dari `runs/detect/smartwaste_yo
 
 # 🔌 API Endpoints
 
+Semua endpoint berada di **backend** (`http://localhost:5000`). Frontend mengaksesnya melalui API client di `frontend/src/lib/api.ts`.
+
 | Method | Endpoint | Deskripsi |
 |--------|----------|-----------|
-| GET | `/` | Home Page |
-| GET | `/klasifikasi` | Classification Page |
-| GET | `/camera` | Camera Real-Time Page |
-| GET | `/about` | About Page |
 | POST | `/api/predict` | Prediksi gambar (multipart/form-data) |
 | POST | `/api/camera-frame` | Deteksi satu frame (JSON base64) |
 | GET | `/api/status` | Status model yang dimuat |
+| GET | `/api/health` | Health check backend |
 
 ### Contoh: POST `/api/predict`
 
@@ -464,11 +532,12 @@ curl -X POST http://localhost:5000/api/camera-frame \
 
 # ☁️ Integrasi Google Drive (Riwayat Prediksi)
 
-Setiap kali endpoint `/api/predict` dipanggil, gambar yang diupload otomatis dikirim ke Google Drive melalui `drive_storage.py`. Proses ini berjalan di **background thread** agar tidak menunda response API. Hasilnya (`prediction`, `confidence`, link Drive) dicatat sebagai satu baris JSON di `riwayat.jsonl`.
+Setiap kali endpoint `/api/predict` dipanggil, gambar yang diupload otomatis dikirim ke Google Drive melalui `backend/drive_storage.py`. Proses ini berjalan di **background thread** agar tidak menunda response API. Hasilnya (`prediction`, `confidence`, link Drive) dicatat sebagai satu baris JSON di `riwayat.jsonl`.
 
 **Setup OAuth (sekali saja, sebelum pertama kali jalan):**
 
 ```bash
+cd backend
 python auth_setup.py
 ```
 
@@ -476,7 +545,7 @@ Script ini membuka browser untuk login Google, lalu menghasilkan `token.json` ya
 
 **Yang diperlukan:**
 
-- `credentials.json` (OAuth client secret dari Google Cloud Console) — letakkan di root project
+- `credentials.json` (OAuth client secret dari Google Cloud Console) — letakkan di folder `backend/`
 - (Opsional) Environment variable `DRIVE_FOLDER_ID` untuk menentukan folder tujuan upload
 
 > ⚠️ `credentials.json` dan `token.json` berisi kredensial sensitif — sudah masuk `.gitignore`, **jangan pernah commit** ke repository publik.
@@ -529,25 +598,36 @@ Training 100 epoch di Google Colab (GPU Tesla T4), best checkpoint di epoch 77.
 
 # 🚢 Deploy
 
-> ⚠️ **Vercel tidak kompatibel** dengan project ini. Aplikasi menjalankan Flask + TensorFlow + YOLOv8 + OpenCV (>250MB dependencies) dengan endpoint kamera real-time yang butuh koneksi persisten — ini melampaui limit ukuran dan timeout serverless function Vercel.
+## Frontend → Vercel
 
-**Rekomendasi: deploy ke Render atau Railway**
+Frontend React dapat di-deploy langsung ke Vercel:
 
 ```bash
-# 1. Push project ke GitHub
-#    Pastikan model/*.keras dan model/*.pt ikut di-commit
-#    (atau gunakan Git LFS jika ukuran menjadi masalah)
-
-# 2. Buat Web Service baru di render.com / railway.app
-#    Build command:
-pip install -r requirements-cpu.txt
-
-#    Start command:
-gunicorn app:app
-#    (tambahkan gunicorn ke requirements.txt)
+cd frontend
+npm run build        # Output ke frontend/dist/
 ```
 
-Render akan memberikan URL publik (`https://nama-app.onrender.com`) yang sudah menjalankan seluruh fitur termasuk kamera real-time.
+File `frontend/vercel.json` sudah dikonfigurasi untuk:
+- Routing SPA (fallback ke `index.html` untuk react-router-dom)
+- API proxy dari `/api/*` ke backend
+
+Setelah deploy, update URL proxy di `vercel.json` agar mengarah ke URL backend produksi (bukan `localhost:5000`).
+
+## Backend → Render / Railway
+
+Backend Flask perlu di-deploy ke platform yang mendukung Python + TensorFlow/YOLO:
+
+```bash
+# Build command:
+pip install -r requirements-cpu.txt
+
+# Start command:
+gunicorn app:app
+```
+
+> Tambahkan `gunicorn` ke `requirements.txt` jika belum ada.
+
+Render/Railway akan memberikan URL publik (`https://nama-app.onrender.com`). Gunakan URL ini sebagai nilai `VITE_API_URL` di environment variable Vercel frontend, dan juga update `vercel.json` proxy destination.
 
 ---
 

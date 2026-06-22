@@ -1,16 +1,42 @@
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
 
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Backend
+backend/__pycache__/
+backend/*.pyc
+
+# Models (keep tracked separately or use LFS)
+*.keras
+*.pt
+
+# Data
 datasets/
 runs/
 logs/
 uploads/
 
-*.keras
-*.pt
-
-.vscode/
-
+# Environment & secrets
+.env
+.env.local
+.env.production
 credentials.json
 token.json
 riwayat.jsonl
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
