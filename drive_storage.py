@@ -1,25 +1,31 @@
 import os
 import io
+import time
+import socket
 import threading
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.errors import HttpError
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 TOKEN_PATH = 'token.json'
 DRIVE_FOLDER_ID = os.environ.get('DRIVE_FOLDER_ID')
 
+MAX_RETRIES = 3
+RETRY_BACKOFF_BASE = 2  # detik — percobaan ke-2 nunggu 2s, ke-3 nunggu 4s
+
 _drive_service = None
 _lock = threading.Lock()
 
 
-def _get_service():
+def _get_service(force_refresh=False):
     global _drive_service
-    if _drive_service:
+    if _drive_service and not force_refresh:
         return _drive_service
     with _lock:
-        if _drive_service:
+        if _drive_service and not force_refresh:
             return _drive_service
         creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
         if creds.expired and creds.refresh_token:
@@ -30,26 +36,58 @@ def _get_service():
         return _drive_service
 
 
+def _is_retryable(e):
+    """True kalau error-nya kemungkinan cuma glitch sesaat (worth di-retry)."""
+    if isinstance(e, (socket.timeout, ConnectionError, OSError, TimeoutError)):
+        return True
+    if isinstance(e, HttpError):
+        # retry untuk rate limit (429) dan server error (5xx)
+        return e.resp.status in (429, 500, 502, 503, 504)
+    return False
+
+
 def upload_to_drive(file_bytes, filename, mimetype='image/jpeg'):
-    """Upload bytes gambar ke Google Drive. Return (file_id, webViewLink) atau (None, None) kalau gagal."""
-    try:
-        service = _get_service()
-        metadata = {'name': filename}
-        if DRIVE_FOLDER_ID:
-            metadata['parents'] = [DRIVE_FOLDER_ID]
-        media = MediaIoBaseUpload(io.BytesIO(file_bytes), mimetype=mimetype)
-        file = service.files().create(
-            body=metadata, media_body=media, fields='id, webViewLink'
-        ).execute()
-        print(f"[✓] Uploaded ke Drive: {filename}")
-        return file.get('id'), file.get('webViewLink')
-    except Exception as e:
-        print(f"[!] Upload ke Drive gagal (diabaikan): {e}")
-        return None, None
+    """Upload bytes gambar ke Google Drive, dengan retry otomatis kalau gagal karena
+    masalah koneksi sesaat. Return (file_id, webViewLink) atau (None, None) kalau
+    semua percobaan gagal."""
+    last_error = None
+
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            service = _get_service()
+            metadata = {'name': filename}
+            if DRIVE_FOLDER_ID:
+                metadata['parents'] = [DRIVE_FOLDER_ID]
+            media = MediaIoBaseUpload(io.BytesIO(file_bytes), mimetype=mimetype)
+            file = service.files().create(
+                body=metadata, media_body=media, fields='id, webViewLink'
+            ).execute()
+            print(f"[✓] Uploaded ke Drive: {filename} (percobaan ke-{attempt})")
+            return file.get('id'), file.get('webViewLink')
+
+        except Exception as e:
+            last_error = e
+            retryable = _is_retryable(e)
+            print(f"[!] Upload ke Drive gagal (percobaan {attempt}/{MAX_RETRIES}): {e}")
+
+            if not retryable:
+                print("[!] Error ini bukan masalah koneksi sesaat — tidak di-retry.")
+                break
+
+            if attempt < MAX_RETRIES:
+                delay = RETRY_BACKOFF_BASE ** attempt
+                print(f"[~] Mencoba lagi dalam {delay} detik...")
+                time.sleep(delay)
+                # paksa rebuild service kalau-kalau koneksi/credentials sempat bermasalah
+                _get_service(force_refresh=True)
+
+    print(f"[!] Upload ke Drive gagal total setelah {MAX_RETRIES} percobaan: {last_error}")
+    return None, None
 
 
 def upload_to_drive_async(file_bytes, filename, mimetype='image/jpeg', on_done=None):
-    """Upload di background thread — supaya /api/predict tidak nunggu Drive API selesai."""
+    """Upload di background thread (dengan retry built-in) — supaya /api/predict
+    tidak nunggu Drive API selesai."""
     def _worker():
         file_id, link = upload_to_drive(file_bytes, filename, mimetype)
         if on_done:
