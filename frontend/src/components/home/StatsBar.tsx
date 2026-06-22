@@ -17,7 +17,7 @@ const stats: StatItem[] = [
 
 function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [display, setDisplay] = suffix ? '0' + suffix : '0';
+  const [display, setDisplay] = useState(suffix ? '0' + suffix : '0');
   const animated = useRef(false);
 
   useEffect(() => {

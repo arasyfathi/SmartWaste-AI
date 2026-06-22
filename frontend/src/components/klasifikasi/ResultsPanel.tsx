@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { getMeta } from '../../lib/constants';
-import { ClassIcon, RecycleIcon } from '../../lib/icons';
+import { ClassIcon } from '../../lib/icons';
 import type { PredictResponse } from '../../lib/api';
 
 type ResultState = 'empty' | 'loading' | 'content' | 'error';
@@ -85,7 +85,7 @@ function ResultsContent({ data }: { data: PredictResponse }) {
         {Object.entries(all_scores).map(([name, pct]) => {
           const m = getMeta(name);
           return (
-            <ConfidenceRow key={name} name={name} pct={pct} color={m.color} icon={m.icon} />
+            <ConfidenceRow key={name} name={name} pct={pct} color={m.color} />
           );
         })}
       </div>
@@ -102,7 +102,7 @@ function ResultsContent({ data }: { data: PredictResponse }) {
   );
 }
 
-function ConfidenceRow({ name, pct, color, icon }: { name: string; pct: number; color: string; icon: string }) {
+function ConfidenceRow({ name, pct, color }: { name: string; pct: number; color: string }) {
   const fillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
