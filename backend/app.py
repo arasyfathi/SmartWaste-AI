@@ -813,11 +813,12 @@ def status():
 
 
 # ─── Run ──────────────────────────────────────────────────────────────────────
+# Panggil load_models() di level modul agar Gunicorn (Docker/HF) juga memuatnya.
+# Saat `python app.py` dijalankan langsung, blok ini juga terpanggil.
+load_models()
+warmup_models()
+
 if __name__ == '__main__':
-    # muat semua model AI sebelum server jalan
-    load_models()
-    # lakukan inference dummy agar request pertama tidak lambat
-    warmup_models()
 
     # DEBUG_MODE dikontrol lewat environment variable, default OFF.
     # PENTING: debug=True mengaktifkan Werkzeug debugger interaktif yang bisa
