@@ -425,6 +425,34 @@ def server_error(e):
 # Semua route di bawah mengembalikan JSON. HTML/frontend dikelola oleh
 # React (Vite) di folder frontend/ — Flask tidak lagi meng-serve HTML.
 
+@app.route('/api/test-upload', methods=['GET'])
+def test_upload():
+    import cloudinary.uploader
+    from dotenv import load_dotenv
+    import os
+    
+    try:
+        # Kita buat gambar dummy kosong 1x1 pixel BGR untuk di-upload
+        import numpy as np
+        import cv2
+        dummy_img = np.zeros((1, 1, 3), dtype=np.uint8)
+        _, buffer = cv2.imencode('.png', dummy_img)
+        img_bytes = buffer.tobytes()
+        
+        cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME')
+        if not cloud_name:
+            return jsonify({"status": "error", "message": "Secret CLOUDINARY_CLOUD_NAME kosong atau tidak terdeteksi di Hugging Face!"})
+            
+        res = cloudinary.uploader.upload(img_bytes, folder="smartwaste_scans")
+        return jsonify({
+            "status": "success", 
+            "url": res.get('secure_url'),
+            "cloud_name_used": cloud_name
+        })
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
+
 @app.route('/api/predict', methods=['POST'])
 def predict():
     print("--- [DEBUG] Permintaan API diterima! ---", flush=True)
