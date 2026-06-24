@@ -1,20 +1,23 @@
 import os                                                  # akses environment variable & path file
-import io                                                  # (tidak dipakai langsung di sini, dipakai modul lain)
 import base64                                              # decode frame kamera yang dikirim sebagai base64
 import json                                                # serialisasi log riwayat ke riwayat.jsonl
 import time                                                # mengukur waktu inferensi (ms)
 import threading                                           # lock supaya inference tidak overlap antar request
 from collections import deque, defaultdict, Counter        # struktur data untuk smoothing & voting deteksi
 import numpy as np                                         # operasi array gambar/angka
-from flask import Flask, render_template, request, jsonify, Response  # framework web & helper response
-from PIL import Image                                      # (tidak dipakai langsung, cadangan utilitas gambar)
-import cv2                                                  # decode/resize/convert gambar (OpenCV)
-import uuid                                                 # generate nama file unik saat upload ke Drive
-from datetime import datetime                               # timestamp untuk nama file & log riwayat
-from drive_storage import upload_to_drive_async              # upload hasil prediksi ke Google Drive di background
+from flask import Flask, request, jsonify                  # framework web & helper response
+from flask_cors import CORS                                # izinkan cross-origin request dari React frontend
+import cv2                                                 # decode/resize/convert gambar (OpenCV)
+import uuid                                                # generate nama file unik saat upload ke Drive
+from datetime import datetime                              # timestamp untuk nama file & log riwayat
+from drive_storage import upload_to_drive_async             # upload hasil prediksi ke Google Drive di background
 
 app = Flask(__name__)                                       # inisialisasi aplikasi Flask
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max upload  # batas ukuran body request (anti DoS upload besar)
+# Izinkan semua origin agar React frontend (Vite dev server / Vercel)
+# bisa mengakses endpoint /api/* tanpa CORS block di browser.
+# Untuk production, ganti origins dengan domain frontend yang sebenarnya.
+CORS(app, resources={r'/api/*': {'origins': '*'}})          # aktifkan CORS hanya untuk endpoint /api/
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024        # batas ukuran body request 10MB (anti DoS upload besar)
 
 # ─── Validasi file upload (server-side) ────────────────────────────────────────
 # Sebelumnya validasi tipe/ukuran file HANYA ada di klasifikasi.js (client-side),
@@ -311,23 +314,9 @@ def server_error(e):
     return jsonify({'error': 'Terjadi kesalahan internal pada server'}), 500  # respons JSON untuk error tak terduga
 
 
-# ─── Routes ───────────────────────────────────────────────────────────────────
-@app.route('/')
-def home():
-    return render_template('index.html', page='home')          # render halaman Home
-
-@app.route('/klasifikasi')
-def klasifikasi():
-    return render_template('klasifikasi.html', page='klasifikasi')  # render halaman upload & klasifikasi gambar
-
-@app.route('/camera')
-def camera():
-    return render_template('camera.html', page='camera')        # render halaman deteksi kamera real-time
-
-@app.route('/about')
-def about():
-    return render_template('about.html', page='about')          # render halaman informasi proyek
-
+# ─── API Routes ───────────────────────────────────────────────────────────────
+# Semua route di bawah mengembalikan JSON. HTML/frontend dikelola oleh
+# React (Vite) di folder frontend/ — Flask tidak lagi meng-serve HTML.
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
