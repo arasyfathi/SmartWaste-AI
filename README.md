@@ -1,3 +1,12 @@
+---
+title: SmartWaste AI
+emoji: ♻️
+colorFrom: green
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
 # ♻️ SmartWaste AI
 
 <div align="center">
