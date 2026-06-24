@@ -9,7 +9,7 @@ import time
 # lock supaya inference tidak overlap antar request
 import threading
 # struktur data untuk smoothing & voting deteksi
-from collections import deque, defaultdict, Counter
+from collections import deque, defaultdict
 # operasi array gambar/angka
 import numpy as np
 # framework web & helper response
