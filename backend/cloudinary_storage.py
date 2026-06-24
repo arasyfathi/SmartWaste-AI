@@ -1,4 +1,5 @@
 import os
+import threading
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
@@ -14,23 +15,48 @@ cloudinary.config(
 )
 
 
-def upload_to_cloudinary(image_path):
-    """
-    Mengunggah gambar ke Cloudinary dan mengembalikan URL publiknya.
-    Gambar akan dimasukkan ke folder 'smartwaste_scans' di akun Cloudinary-mu.
-    """
+def _upload_worker(img_bytes, filename, on_done):
+    """Fungsi pekerja yang berjalan di background thread untuk mengunggah gambar."""
     try:
-        # Proses unggah
+        if not os.getenv('CLOUDINARY_CLOUD_NAME'):
+            print("[X] Gagal mengunggah: Kredensial Cloudinary (CLOUDINARY_CLOUD_NAME) tidak ditemukan di environment/secrets!", flush=True)
+            if on_done:
+                on_done(None, None)
+            return
+
+        # Menghapus ekstensi file untuk dijadikan public_id di Cloudinary
+        public_id_base = os.path.splitext(filename)[0]
+
+        # Unggah langsung data bytes gambar tanpa perlu disimpan ke disk dahulu
         response = cloudinary.uploader.upload(
-            image_path,
-            folder="smartwaste_scans"  # Nama folder di Cloudinary
+            img_bytes,
+            public_id=public_id_base,
+            folder="smartwaste_scans"
         )
 
-        # Mengambil URL HTTPS yang aman
+        public_id = response.get('public_id')
         secure_url = response.get('secure_url')
-        print(f"[OK] Gambar berhasil diunggah: {secure_url}")
-        return secure_url
+
+        print(f"[OK] Cloudinary upload berhasil: {secure_url}", flush=True)
+
+        # Jalankan fungsi callback untuk mencatat riwayat ke JSONL
+        if on_done:
+            on_done(public_id, secure_url)
 
     except Exception as e:
-        print(f"[ERROR] Gagal mengunggah ke Cloudinary: {e}")
-        return None
+        print(f"[X] Gagal mengunggah ke Cloudinary: {e}", flush=True)
+        if on_done:
+            on_done(None, None)
+
+
+def upload_to_cloudinary_async(img_bytes, filename, on_done=None):
+    """
+    Memulai proses unggah di thread terpisah agar Flask tidak mengalami 
+    flicker/lag saat melayani request frame kamera atau upload.
+    """
+    thread = threading.Thread(
+        target=_upload_worker,
+        args=(img_bytes, filename, on_done),
+        daemon=True
+    )
+    thread.start()
