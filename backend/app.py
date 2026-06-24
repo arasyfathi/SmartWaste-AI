@@ -458,6 +458,24 @@ def test_upload():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+@app.route('/api/debug-files', methods=['GET'])
+def debug_files():
+    import os
+    try:
+        base_dir = os.getcwd()
+        model_dir = os.path.join(base_dir, 'model')
+        class_dir = os.path.join(model_dir, 'classification')
+        
+        return jsonify({
+            "cwd": base_dir,
+            "root_files": os.listdir(base_dir) if os.path.exists(base_dir) else [],
+            "model_files": os.listdir(model_dir) if os.path.exists(model_dir) else "NOT_FOUND",
+            "class_files": os.listdir(class_dir) if os.path.exists(class_dir) else "NOT_FOUND",
+            "keras_path_used": MODEL_PATH_KERAS,
+            "yolo_path_used": MODEL_PATH_YOLO
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
