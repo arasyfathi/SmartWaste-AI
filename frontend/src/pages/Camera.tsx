@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { useCamera } from '../hooks/useCamera';
 import { EmojiToIcon, LightbulbIcon } from '../lib/icons';
 
@@ -127,7 +128,7 @@ export function Camera() {
             { num: '04', icon: <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2"/><circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="2"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>, title: 'Bounding Box', desc: 'Overlay bounding box + label + confidence' },
             { num: '05', icon: <svg viewBox="0 0 24 24" fill="none"><path d="M3 3v16a2 2 0 0 0 2 2h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="7" y="13" width="3" height="5" rx="1" fill="currentColor"/><rect x="12" y="9" width="3" height="9" rx="1" fill="currentColor" opacity="0.6"/><rect x="17" y="5" width="3" height="13" rx="1" fill="currentColor" opacity="0.85"/></svg>, title: 'Tampilkan Hasil', desc: 'Update panel deteksi secara live' },
           ].map((step, i) => (
-            <div key={step.num}>
+            <Fragment key={step.num}>
               {i > 0 && <div className="how-arrow">&rarr;</div>}
               <div className="how-step">
                 <div className="how-step-num">{step.num}</div>
@@ -135,7 +136,7 @@ export function Camera() {
                 <strong>{step.title}</strong>
                 <p>{step.desc}</p>
               </div>
-            </div>
+            </Fragment>
           ))}
         </div>
       </div>
