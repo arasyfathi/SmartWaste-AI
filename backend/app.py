@@ -427,6 +427,8 @@ def server_error(e):
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
+    print("--- [DEBUG] Permintaan API diterima! ---", flush=True)
+
     if 'image' not in request.files:
         # request tidak menyertakan field 'image'
         return jsonify({'error': 'Tidak ada file gambar'}), 400
