@@ -431,6 +431,19 @@ def server_error(e):
 # Semua route di bawah mengembalikan JSON. HTML/frontend dikelola oleh
 # React (Vite) di folder frontend/ — Flask tidak lagi meng-serve HTML.
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        "app": "SmartWaste AI Backend",
+        "status": "running",
+        "endpoints": ["/api/predict", "/api/camera-frame", "/api/status", "/api/health", "/api/debug"],
+        "models": {
+            "keras": model_keras is not None,
+            "yolo": model_yolo is not None
+        },
+        "message": "Backend SmartWaste AI berjalan normal. Frontend tersedia di Vercel."
+    })
+
 @app.route('/api/test-upload', methods=['GET'])
 def test_upload():
     import cloudinary.uploader
