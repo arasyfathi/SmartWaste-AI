@@ -42,8 +42,10 @@ except ImportError:
     print("[!] PyTorch tidak ditemukan - fallback ke CPU")    # log peringatan dependency hilang
 
 # ─── Konfigurasi ──────────────────────────────────────────────────────────────
-MODEL_PATH_KERAS = 'model/classification/smartwaste_mobilenetv2.keras'  # path model MobileNetV2
-IMG_SIZE         = 224                                       # ukuran input gambar untuk MobileNetV2 (224x224)
+MODEL_PATH_KERAS    = 'model/classification/smartwaste_mobilenetv2.keras'  # path model MobileNetV2
+IMG_SIZE            = 224                                       # ukuran input gambar untuk MobileNetV2 (224x224)
+CONFIDENCE_THRESHOLD = 0.60  # threshold minimum confidence MobileNetV2:
+                              # jika confidence tertinggi < 60%, prediksi dianggap "Tidak Dikenali"
 
 # Path YOLO: cek hasil training baru dulu, fallback ke model lama
 YOLO_CANDIDATES = [
@@ -355,6 +357,22 @@ def predict():
     except Exception as e:
         return jsonify({'error': f'Prediksi gagal: {str(e)}'}), 500  # tangani error saat inference
 
+    # ─── Confidence threshold — tolak prediksi yang tidak meyakinkan ──────
+    # Jika skor tertinggi model < CONFIDENCE_THRESHOLD (60%), gambar yang
+    # diupload kemungkinan bukan sampah yang dikenal model. Daripada memaksa
+    # ke salah satu kelas, label diubah ke "Tidak Dikenali" dan rekomendasi
+    # dikosongkan agar frontend tidak menampilkan tips yang menyesatkan.
+    if confidence < CONFIDENCE_THRESHOLD:
+        label = 'Tidak Dikenali'
+        rec   = {
+            'icon':   '❓',
+            'color':  '#6b7280',                                     # warna netral abu-abu
+            'tips':   ['Tolong unggah gambar sampah yang lebih jelas.'],
+            'action': 'Tidak Dikenali',
+        }
+    else:
+        rec = RECOMMENDATIONS.get(label, {})                         # ambil data rekomendasi sesuai label prediksi
+
     # ─── Upload ke Google Drive (background, tidak menunda response) ──────
     ext = os.path.splitext(file.filename)[1].lower()               # ambil ekstensi file asli
     drive_filename = f"{datetime.now():%Y%m%d_%H%M%S}_{uuid.uuid4().hex[:8]}{ext}"  # nama file unik berbasis waktu+uuid
@@ -365,7 +383,7 @@ def predict():
                 'filename':   drive_filename,
                 'drive_file_id': file_id,
                 'drive_link': link,
-                'prediction': label,
+                'prediction': label,                                  # label sudah di-override jika di bawah threshold
                 'confidence': round(confidence * 100, 1),
                 'timestamp':  datetime.now().isoformat(),
             }
@@ -374,14 +392,13 @@ def predict():
 
     upload_to_drive_async(img_bytes, drive_filename, file.mimetype, on_done=_log_drive_upload)  # upload async, callback saat selesai
 
-    rec = RECOMMENDATIONS.get(label, {})                             # ambil data rekomendasi sesuai label prediksi
     return jsonify({
         'success':        True,
-        'prediction':     label,                                     # kelas hasil prediksi
-        'confidence':     round(confidence * 100, 1),                 # confidence dalam persen
+        'prediction':     label,                                     # kelas hasil prediksi (atau "Tidak Dikenali")
+        'confidence':     round(confidence * 100, 1),                 # confidence model mentah dalam persen
         'all_scores':     {k: round(v * 100, 1) for k, v in
                            sorted(all_scores.items(), key=lambda x: x[1], reverse=True)},  # semua skor, diurutkan desc
-        'recommendation': rec,                                        # ikon, warna, tips, dan aksi
+        'recommendation': rec,                                        # ikon, warna, tips, dan aksi (kosong jika tidak dikenali)
         'model_used':     model_used,                                 # info model yang dipakai
     })
 

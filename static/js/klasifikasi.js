@@ -6,11 +6,12 @@
 // Kaca/Logam tertukar warnanya antara halaman Klasifikasi & Camera. Sekarang
 // satu sumber kebenaran: warna sama persis dengan app.py.
 const CLASS_META = {
-  'Plastik': { color: '#06b6d4', icon: 'plastic' },
-  'Kertas':  { color: '#f59e0b', icon: 'paper' },
-  'Kaca':    { color: '#8b5cf6', icon: 'glass' },
-  'Logam':   { color: '#10d9a0', icon: 'metal' },
-  'Organik': { color: '#4ade80', icon: 'organic' },
+  'Plastik':         { color: '#06b6d4', icon: 'plastic' },
+  'Kertas':          { color: '#f59e0b', icon: 'paper' },
+  'Kaca':            { color: '#8b5cf6', icon: 'glass' },
+  'Logam':           { color: '#10d9a0', icon: 'metal' },
+  'Organik':         { color: '#4ade80', icon: 'organic' },
+  'Tidak Dikenali':  { color: '#6b7280', icon: 'warning' },  // fallback kelas threshold rendah
 };
 
 const ICONS = {
@@ -21,10 +22,19 @@ const ICONS = {
   organic: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" fill="currentColor" opacity="0.18"/><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   cardboard: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
   recycle: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m14 16-3 3 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  // Ikon segitiga peringatan — dipakai saat prediksi "Tidak Dikenali" (confidence < 60%)
+  warning: `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>`,
 };
 
 function getMeta(name) {
+  // 'Tidak Dikenali' sudah terdaftar di CLASS_META dengan warna abu-abu + ikon warning.
+  // Kelas tidak dikenal lainnya (edge case) fallback ke recycle hijau.
   return CLASS_META[name] || { color: '#5ba35b', icon: 'recycle' };
+}
+
+/** Kembalikan true jika prediksi tidak melewati confidence threshold backend */
+function isUnknown(prediction) {
+  return prediction === 'Tidak Dikenali';
 }
 
 const dropzone      = document.getElementById('dropzone');
@@ -95,8 +105,10 @@ predictBtn.addEventListener('click', async () => {
 // ── Render results ─────────────────────────────────────────────────────────────
 function renderResults(data) {
   const { prediction, confidence, all_scores, recommendation } = data;
-  const meta = getMeta(prediction);
+  const unknown = isUnknown(prediction);               // true jika confidence < 60%
+  const meta    = getMeta(prediction);
 
+  // ── Ikon & label utama ──────────────────────────────────────────────────────
   document.getElementById('result-icon').innerHTML       = ICONS[meta.icon] || ICONS.recycle;
   document.getElementById('result-icon').style.color     = meta.color;
   document.getElementById('result-label').textContent    = prediction;
@@ -104,7 +116,36 @@ function renderResults(data) {
   document.getElementById('result-conf-big').textContent = confidence + '%';
   document.getElementById('result-conf-big').style.color = meta.color;
 
-  // Confidence list (replaces single bar + all-bars from old layout)
+  // ── Alert banner "Tidak Dikenali" ───────────────────────────────────────────
+  // Hapus banner lama (jika ada dari render sebelumnya) agar tidak ganda
+  const oldAlert = document.getElementById('unknown-alert');
+  if (oldAlert) oldAlert.remove();
+
+  if (unknown) {
+    const alertEl = document.createElement('div');
+    alertEl.id        = 'unknown-alert';
+    alertEl.className = 'unknown-alert';
+    alertEl.innerHTML = `
+      <span class="unknown-alert-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="17" r="1" fill="currentColor"/>
+        </svg>
+      </span>
+      <div class="unknown-alert-text">
+        <strong>Hmm, gambar tidak dikenali</strong>
+        <p>Sepertinya ini bukan gambar sampah, atau fotonya kurang jelas.<br>
+           Coba unggah foto yang lebih terang dengan satu objek sampah yang jelas.</p>
+      </div>`;
+    // Sisipkan alert tepat di atas confidence list
+    const confSection = document.querySelector('.conf-section-label');
+    confSection.parentNode.insertBefore(alertEl, confSection);
+  }
+
+  // ── Confidence list ─────────────────────────────────────────────────────────
   const list = document.getElementById('confidence-list');
   list.innerHTML = '';
   Object.entries(all_scores).forEach(([name, pct]) => {
@@ -119,15 +160,40 @@ function renderResults(data) {
     setTimeout(() => { row.querySelector('.conf-bar-fill').style.width = pct + '%'; }, 80);
   });
 
-  document.getElementById('rec-text').textContent =
-    (recommendation && recommendation.tips && recommendation.tips.length)
-      ? recommendation.tips.join(' ')
-      : `Aksi yang direkomendasikan: ${recommendation && recommendation.action ? recommendation.action : '—'}`;
+  // ── Rekomendasi — sembunyikan jika "Tidak Dikenali" ─────────────────────────
+  const recBox = document.getElementById('rec-box');
+  if (unknown) {
+    recBox.style.display = 'none';                     // sembunyikan seluruh blok rekomendasi
+  } else {
+    recBox.style.display = '';
+    document.getElementById('rec-text').textContent =
+      (recommendation && recommendation.tips && recommendation.tips.length)
+        ? recommendation.tips.join(' ')
+        : `Aksi yang direkomendasikan: ${recommendation && recommendation.action ? recommendation.action : '—'}`;
+  }
 
-  statusBadge.innerHTML = `
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.12"/><path d="M8 12.5l2.5 2.5L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Terdeteksi`;
-  statusBadge.className = 'status-badge';
+  // ── Status badge ────────────────────────────────────────────────────────────
+  if (unknown) {
+    statusBadge.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              fill="currentColor" fill-opacity="0.2" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="17" r="1" fill="currentColor"/>
+      </svg>
+      Tidak Dikenali`;
+    statusBadge.className = 'status-badge status-unknown';
+  } else {
+    statusBadge.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" fill="currentColor" fill-opacity="0.12"/>
+        <path d="M8 12.5l2.5 2.5L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Terdeteksi`;
+    statusBadge.className = 'status-badge';
+  }
+
   showState('content');
 }
 
