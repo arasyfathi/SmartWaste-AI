@@ -29,7 +29,7 @@ ALLOWED_MIME_TYPES  = {'image/jpeg', 'image/png', 'image/webp'}  # MIME type yan
 # 4-17 detik/frame). Sekarang device dipilih otomatis: pakai GPU jika tersedia,
 # fallback ke CPU jika tidak ada.
 try:
-    import torch                                            # cek ketersediaan PyTorch/CUDA
+    import torch  # type: ignore                              # cek ketersediaan PyTorch/CUDA
     YOLO_DEVICE = 0 if torch.cuda.is_available() else 'cpu'  # device index 0 (GPU) atau 'cpu'
     YOLO_HALF   = torch.cuda.is_available()  # FP16 di GPU → lebih cepat lagi  # half-precision hanya valid di GPU
     if torch.cuda.is_available():
@@ -156,7 +156,7 @@ def load_models():
     for yolo_path in YOLO_CANDIDATES:                          # coba tiap kandidat path YOLO secara berurutan
         if os.path.exists(yolo_path):                          # hanya proses jika file benar-benar ada
             try:
-                from ultralytics import YOLO                  # import lazy supaya start lebih cepat jika tak dipakai
+                from ultralytics import YOLO  # type: ignore  # import lazy supaya start lebih cepat jika tak dipakai
                 model_yolo = YOLO(yolo_path)                   # load bobot model YOLO dari file .pt
                 model_yolo.to(YOLO_DEVICE)                      # pindahkan model ke GPU/CPU sesuai deteksi device
                 yolo_path_used = yolo_path                      # simpan path yang berhasil dipakai
