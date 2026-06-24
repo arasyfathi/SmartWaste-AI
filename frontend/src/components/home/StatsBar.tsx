@@ -56,20 +56,22 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
 
 export function StatsBar() {
   return (
-    <div className="stats-bar fade-up">
-      {stats.map((stat, i) => (
-        <div key={i} className="stat">
-          <span className="stat-num">
-            {stat.counter !== undefined ? (
-              <AnimatedCounter target={stat.counter} suffix={stat.suffix} />
-            ) : (
-              stat.value
-            )}
-          </span>
-          <span className="stat-label">{stat.label}</span>
-          {i < stats.length - 1 && <div className="stat-divider" />}
-        </div>
-      ))}
+    <div className="stats-bar-wrap">
+      <div className="stats-bar fade-up">
+        {stats.map((stat, i) => (
+          <div key={i} className="stat">
+            <span className="stat-num">
+              {stat.counter !== undefined ? (
+                <AnimatedCounter target={stat.counter} suffix={stat.suffix} />
+              ) : (
+                stat.value
+              )}
+            </span>
+            <span className="stat-label">{stat.label}</span>
+            {i < stats.length - 1 && <div className="stat-divider" />}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

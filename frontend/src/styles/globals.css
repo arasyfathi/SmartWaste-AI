@@ -658,17 +658,24 @@ main { padding-top: var(--navbar-h); }
 }
 
 /* ── Stats bar ─────────────────────────────────────────────────────────────── */
+/* Wrapper: mengelola margin vertikal & horizontal centering.                  */
+/* .stats-bar sendiri hanya mengatur tampilan internal (warna, padding, dll).  */
+.stats-bar-wrap {
+  max-width: var(--container);   /* batas lebar agar tidak membentang di monitor lebar */
+  margin: 52px auto 48px;        /* jarak atas dari hero, jarak bawah ke section berikutnya */
+  padding: 0 40px;               /* padding horizontal agar tidak mentok pinggir layar */
+}
+
 .stats-bar {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0;
-  padding: 26px 40px;
-  margin: 56px auto 0;
-  max-width: var(--container);
-  border-radius: var(--radius-lg);
+  padding: 28px 40px;
+  border-radius: var(--radius-lg);   /* sudut membulat */
   background: linear-gradient(135deg, var(--forest) 0%, #143a1d 100%);
   flex-wrap: wrap;
+  box-shadow: 0 12px 40px rgba(30,77,43,.18);  /* subtle shadow agar terasa "mengambang" */
 }
 
 .stat {
@@ -702,7 +709,8 @@ main { padding-top: var(--navbar-h); }
 }
 
 @media (max-width: 768px) {
-  .stats-bar { padding: 20px; border-radius: var(--radius); margin-top: 40px; }
+  .stats-bar-wrap { padding: 0 20px; margin: 36px auto 32px; }
+  .stats-bar { padding: 20px; border-radius: var(--radius); }
   .stat { padding: 10px 22px; }
   .stat-divider { display: none; }
   .stat-num { font-size: 24px; }
@@ -841,7 +849,7 @@ main { padding-top: var(--navbar-h); }
 /* ── How it works — 3D tilt cards ─────────────────────────────────────────── */
 .steps-wrap-3d {
   display: flex;
-  align-items: stretch;
+  align-items: center;          /* FIX: was 'stretch' — connector harus rata tengah dengan kartu */
   justify-content: space-between;
   gap: 0;
   margin-top: 52px;
@@ -961,7 +969,7 @@ main { padding-top: var(--navbar-h); }
 .step-connector-3d {
   flex: 0 0 auto;
   width: 56px;
-  align-self: center;
+  align-self: center;           /* FIX: pastikan connector rata tengah meski parent flex sudah center */
   position: relative;
   height: 2px;
   background: var(--border-strong);
@@ -1685,10 +1693,16 @@ main { padding-top: var(--navbar-h); }
 .how-step strong { font-size: 13.5px; font-weight: 600; font-family: var(--font); color: var(--text); }
 .how-step p { font-size: 11.5px; color: var(--muted); }
 
-.how-arrow { font-size: 18px; color: var(--faint); flex-shrink: 0; }
+.how-arrow {
+  font-size: 18px;
+  color: var(--faint);
+  flex-shrink: 0;
+  align-self: center;           /* FIX: teks panah rata tengah vertikal terhadap kartu di Camera page */
+  line-height: 1;
+}
 
 @media (max-width: 860px) {
-  .how-arrow { display: none; }
+  .how-arrow { display: none; }  /* sembunyikan panah saat kartu stack vertikal di mobile */
   .how-steps { flex-direction: column; }
   .how-step { width: 100%; }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 
 interface Step {
   num: string;
@@ -75,7 +75,9 @@ export function HowItWorks() {
   return (
     <div ref={containerRef} className="steps-wrap-3d">
       {steps.map((step, i) => (
-        <div key={step.num}>
+        // Fragment dengan key agar connector & card langsung jadi flex children
+        // dari .steps-wrap-3d — tanpa div wrapper yang memutus flex alignment.
+        <Fragment key={step.num}>
           {i > 0 && (
             <div className="step-connector-3d">
               <span></span><span></span><span></span>
@@ -92,7 +94,7 @@ export function HowItWorks() {
               <p>{step.desc}</p>
             </div>
           </div>
-        </div>
+        </Fragment>
       ))}
     </div>
   );
