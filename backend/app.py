@@ -70,8 +70,14 @@ except ImportError:
     print("[!] PyTorch tidak ditemukan - fallback ke CPU")
 
 # ─── Konfigurasi ──────────────────────────────────────────────────────────────
-# path model MobileNetV2
-MODEL_PATH_KERAS = '../model/classification/smartwaste_mobilenetv2.keras'
+# Cek lokasi model (mendukung jalan di lokal maupun dalam Docker/HF)
+KERAS_CANDIDATES = [
+    '../model/classification/smartwaste_mobilenetv2.keras',  # Path jika run lokal dari folder backend/
+    'model/classification/smartwaste_mobilenetv2.keras',     # Path jika run di Docker (app.py dan model sejajar di /app)
+    './model/classification/smartwaste_mobilenetv2.keras'
+]
+MODEL_PATH_KERAS = next((p for p in KERAS_CANDIDATES if os.path.exists(p)), None)
+
 # ukuran input gambar untuk MobileNetV2 (224x224)
 IMG_SIZE = 224
 CONFIDENCE_THRESHOLD = 0.60  # threshold minimum confidence MobileNetV2:
@@ -79,10 +85,10 @@ CONFIDENCE_THRESHOLD = 0.60  # threshold minimum confidence MobileNetV2:
 
 # Path YOLO: cek hasil training baru dulu, fallback ke model lama
 YOLO_CANDIDATES = [
-    # lokasi model YOLO hasil training terbaru
-    '../model/yolo/smartwaste_yolo.pt',
-    # fallback lokasi lama
-    '../model/smartwaste_yolo.pt'
+    '../model/yolo/smartwaste_yolo.pt',  # Local
+    'model/yolo/smartwaste_yolo.pt',     # Docker
+    '../model/smartwaste_yolo.pt',       # Local fallback lama
+    'model/smartwaste_yolo.pt'           # Docker fallback lama
 ]
 # pilih path pertama yang ada
 MODEL_PATH_YOLO = next((p for p in YOLO_CANDIDATES if os.path.exists(p)), None)
