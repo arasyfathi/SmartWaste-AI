@@ -446,39 +446,38 @@ def index():
 
 @app.route('/api/test-upload', methods=['GET'])
 def test_upload():
-    import cloudinary.uploader
-    from dotenv import load_dotenv
-    import os
-    
+    """Endpoint untuk menguji koneksi Cloudinary — gunakan hanya untuk debugging."""
     try:
-        # Kita buat gambar dummy kosong 1x1 pixel BGR untuk di-upload
-        import numpy as np
-        import cv2
+        # Buat gambar dummy 1x1 pixel untuk test upload
         dummy_img = np.zeros((1, 1, 3), dtype=np.uint8)
         _, buffer = cv2.imencode('.png', dummy_img)
         img_bytes = buffer.tobytes()
-        
+
         cloud_name = os.getenv('CLOUDINARY_CLOUD_NAME')
         if not cloud_name:
-            return jsonify({"status": "error", "message": "Secret CLOUDINARY_CLOUD_NAME kosong atau tidak terdeteksi di Hugging Face!"})
-            
+            return jsonify({
+                "status": "error",
+                "message": "Secret CLOUDINARY_CLOUD_NAME kosong atau tidak terdeteksi!"
+            })
+
+        import cloudinary.uploader
         res = cloudinary.uploader.upload(img_bytes, folder="smartwaste_scans")
         return jsonify({
-            "status": "success", 
+            "status": "success",
             "url": res.get('secure_url'),
             "cloud_name_used": cloud_name
         })
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+
 @app.route('/api/debug-files', methods=['GET'])
 def debug_files():
-    import os
+    """Endpoint untuk debugging lokasi file model di server."""
     try:
         base_dir = os.getcwd()
         model_dir = os.path.join(base_dir, 'model')
         class_dir = os.path.join(model_dir, 'classification')
-        
         return jsonify({
             "cwd": base_dir,
             "root_files": os.listdir(base_dir) if os.path.exists(base_dir) else [],
