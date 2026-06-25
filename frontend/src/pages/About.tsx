@@ -74,9 +74,9 @@ export function AboutPage() {
             {[
               { val: 'MobileNetV2', key: 'KLASIFIKASI' },
               { val: 'YOLOv8m', key: 'DETEKSI RT' },
-              { val: '224px', key: 'INPUT SIZE' },
-              { val: '90.02%', key: 'MN ACCURACY' },
-              { val: '65.4%', key: 'YOLO mAP50' },
+              { val: 'Auto-Resize', key: 'PRE-PROCESSING' },
+              { val: '< 50ms', key: 'INFERENCE SPEED' },
+              { val: 'Ringan', key: 'MODEL SIZE' },
               { val: '5 Kelas', key: 'OUTPUT' },
             ].map((item) => (
               <div key={item.key} className="model-box">
