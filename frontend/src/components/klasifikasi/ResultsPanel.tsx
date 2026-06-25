@@ -80,7 +80,7 @@ function ResultsContent({ data }: { data: PredictResponse }) {
         <div className="result-conf-big" style={{ color: meta.color }}>{confidence}%</div>
       </div>
 
-      <div className="conf-section-label">CONFIDENCE SCORE</div>
+      <div className="conf-section-label">SKOR KEPERCAYAAN</div>
       <div className="confidence-list">
         {Object.entries(all_scores).map(([name, pct]) => {
           const m = getMeta(name);
