@@ -7,295 +7,222 @@ sdk: docker
 pinned: false
 ---
 
-# ♻️ SmartWaste AI
-
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue)
-![Flask](https://img.shields.io/badge/Flask-3.0-green)
-![React](https://img.shields.io/badge/React-19-61dafb)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6)
-![Vite](https://img.shields.io/badge/Vite-6-purple)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.13%2B-orange)
+# ♻️ SmartWaste AI
+
+**Sistem Deteksi dan Klasifikasi Sampah Real-Time Berbasis Artificial Intelligence**
+
+Dikembangkan sebagai Proyek Akhir Mata Kuliah IMV — Telkom University, Tahun Akademik 2026
+
+---
+
+![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.0-black?logo=flask)
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6?logo=typescript&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.13-orange?logo=tensorflow&logoColor=white)
 ![YOLOv8](https://img.shields.io/badge/YOLOv8m-Ultralytics-red)
-![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-purple)
-
-### Sistem Klasifikasi dan Deteksi Sampah Real-Time Berbasis Artificial Intelligence
-
-Dikembangkan oleh Mahasiswa Telkom University — Tahun Akademik 2026
+![Cloudinary](https://img.shields.io/badge/Cloudinary-Storage-blue?logo=cloudinary)
+![Vercel](https://img.shields.io/badge/Vercel-Frontend-black?logo=vercel)
+![HuggingFace](https://img.shields.io/badge/Hugging%20Face-Backend-yellow?logo=huggingface)
 
 </div>
 
 ---
 
-# 📑 Daftar Isi
+## 📑 Daftar Isi
 
 - [📖 Gambaran Umum](#-gambaran-umum)
 - [🌍 Latar Belakang](#-latar-belakang)
 - [✨ Fitur Utama](#-fitur-utama)
+- [🚀 Live Demo](#-live-demo)
+- [🏗 Arsitektur Sistem](#-arsitektur-sistem)
+- [💻 Tech Stack](#-tech-stack)
+- [📁 Struktur Direktori](#-struktur-direktori)
 - [🧠 Model Artificial Intelligence](#-model-artificial-intelligence)
 - [🗂 Kategori Sampah](#-kategori-sampah)
 - [📊 Dataset](#-dataset)
-- [🏗 Arsitektur Sistem](#-arsitektur-sistem)
-- [💻 Tech Stack](#-tech-stack)
-- [📁 Struktur Proyek](#-struktur-proyek)
-- [⚙️ Instalasi](#️-instalasi)
-- [🧠 Training Model](#-training-model)
-- [🚀 Cara Penggunaan](#-cara-penggunaan)
-- [🔌 API Endpoints](#-api-endpoints)
-- [☁️ Integrasi Google Drive](#️-integrasi-google-drive-riwayat-prediksi)
 - [📈 Hasil Pelatihan Model](#-hasil-pelatihan-model)
-- [🚢 Deploy](#-deploy)
+- [⚙️ Instalasi Lokal](#️-instalasi-lokal)
+- [🔌 API Endpoints](#-api-endpoints)
+- [🚢 Deployment Produksi](#-deployment-produksi)
 - [👨‍💻 Tim Pengembang](#-tim-pengembang)
 - [📜 Lisensi](#-lisensi)
 
 ---
 
-# 📖 Gambaran Umum
+## 📖 Gambaran Umum
 
-SmartWaste AI adalah aplikasi web berbasis Artificial Intelligence yang membantu pengguna mengenali dan memilah sampah secara otomatis menggunakan Computer Vision dan Deep Learning.
+**SmartWaste AI** adalah aplikasi web berbasis Kecerdasan Buatan (AI) yang membantu pengguna mengenali dan memilah sampah secara otomatis menggunakan teknologi *Computer Vision* dan *Deep Learning*.
 
-Sistem ini menggabungkan **dua model AI** untuk dua skenario berbeda:
+Sistem ini menggabungkan **dua model AI** untuk dua skenario penggunaan yang berbeda:
 
-| Mode | Model | Cara Kerja |
-|------|-------|------------|
-| 📸 **Klasifikasi Gambar** | MobileNetV2 (Keras/TensorFlow) | Pengguna mengunggah foto sampah → model mengklasifikasikan ke 5 kategori |
-| 📷 **Deteksi Real-Time** | YOLOv8m (Ultralytics/PyTorch) | Kamera streaming langsung → deteksi objek sampah dengan bounding box & confidence score |
+| Mode | Model AI | Mekanisme |
+|------|----------|-----------|
+| 📸 **Klasifikasi Gambar** | MobileNetV2 (TensorFlow/Keras) | Pengguna mengunggah foto sampah → model mengklasifikasikan ke 5 kategori + rekomendasi pengelolaan |
+| 📷 **Deteksi Real-Time** | YOLOv8m (Ultralytics/PyTorch) | Kamera streaming langsung → deteksi objek sampah dengan *bounding box* dan *confidence score* |
 
-Setiap gambar yang diklasifikasikan melalui halaman Klasifikasi otomatis diupload ke **Google Drive** (berjalan di background thread, tidak menunda response) dan dicatat di `riwayat.jsonl` sebagai log riwayat prediksi.
+Setiap gambar yang berhasil diklasifikasikan otomatis diunggah ke **Cloudinary** (berjalan di *background thread*, tidak menunda *response* API) dan dicatat di log riwayat prediksi.
 
 ---
 
-# 🌍 Latar Belakang
+## 🌍 Latar Belakang
 
-Permasalahan sampah masih menjadi salah satu tantangan lingkungan terbesar di Indonesia. Kurangnya kesadaran masyarakat dalam memilah sampah menyebabkan:
+Permasalahan sampah merupakan salah satu tantangan lingkungan terbesar di Indonesia. Kurangnya kesadaran masyarakat dalam memilah sampah berdampak pada:
 
 - Rendahnya efektivitas proses daur ulang
-- Meningkatnya jumlah sampah di Tempat Pembuangan Akhir (TPA)
-- Menurunnya efisiensi pengelolaan limbah
+- Meningkatnya volume sampah di Tempat Pembuangan Akhir (TPA)
+- Menurunnya efisiensi pengelolaan limbah perkotaan
 
-SmartWaste AI dikembangkan sebagai solusi edukatif berbasis AI untuk membantu masyarakat mengenali jenis sampah secara cepat dan akurat, sekaligus memberikan rekomendasi pengelolaan yang tepat.
-
----
-
-# ✨ Fitur Utama
-
-- **Klasifikasi gambar** dengan MobileNetV2 — upload foto dan dapatkan prediksi + confidence score + rekomendasi pengelolaan
-- **Deteksi sampah real-time** via webcam dengan YOLOv8m — bounding box, confidence score, dan label kelas langsung di stream video
-- **Smoothing deteksi** berbasis voting (deque + Counter) untuk mengurangi flickering label pada mode kamera
-- **Rekomendasi pengelolaan** per kategori: tips daur ulang, kompos, pengepul, dll.
-- **Integrasi Google Drive** — setiap prediksi otomatis dibackup ke Drive (async, tidak blokir response)
-- **Log riwayat prediksi** di `riwayat.jsonl` (prediction, confidence, timestamp, link Drive)
-- **Deteksi GPU otomatis** — YOLO pakai GPU (CUDA) jika tersedia, fallback CPU jika tidak
-- **Validasi file server-side** — tipe & ukuran file divalidasi di backend (bukan hanya di JS)
-- **Frontend modern React + TypeScript** — UI responsif, komponen modular, dan pengalaman pengguna yang cepat dengan Vite
+**SmartWaste AI** dikembangkan sebagai solusi edukatif berbasis AI untuk membantu masyarakat mengenali jenis sampah secara cepat, akurat, dan interaktif — sekaligus memberikan panduan pengelolaan yang tepat per kategori.
 
 ---
 
-# 🧠 Model Artificial Intelligence
+## ✨ Fitur Utama
 
-## MobileNetV2 — Klasifikasi Gambar
-
-| Properti | Detail |
-|----------|--------|
-| Arsitektur | MobileNetV2 (Transfer Learning dari ImageNet) |
-| Framework | TensorFlow / Keras |
-| Input | 224×224 px, 3 channel (RGB) |
-| Output | 5 kelas (softmax) |
-| File model | `model/classification/smartwaste_mobilenetv2.keras` |
-| Training | 2 tahap: head training (15 epoch) + fine-tune top 40 layers (20 epoch) |
-| Augmentasi | Rotasi, flip, zoom, brightness, shear |
-
-## YOLOv8m — Deteksi Real-Time
-
-| Properti | Detail |
-|----------|--------|
-| Arsitektur | YOLOv8 Medium (yolov8m.pt) |
-| Framework | Ultralytics / PyTorch |
-| Input | 640×640 px |
-| Output | 5 kelas + bounding box + confidence |
-| File model | `model/yolo/smartwaste_yolo.pt` |
-| Training | 100 epoch (dengan resume di Google Colab, GPU Tesla T4), best checkpoint epoch 77 |
-| Batch size | 16 (turunkan ke 8/4 jika VRAM < 6GB) |
+- 📸 **Klasifikasi Gambar** — Upload foto sampah, dapatkan prediksi kategori + *confidence score* + rekomendasi pengelolaan
+- 📷 **Deteksi Real-Time** — Deteksi objek sampah via webcam dengan *bounding box*, label, dan skor akurasi langsung di *live stream*
+- 🔄 **Smoothing Deteksi** — Mekanisme *voting* berbasis `deque` untuk menstabilkan label pada mode kamera dan mengurangi *flickering*
+- 💡 **Rekomendasi Pengelolaan** — Tips spesifik per kategori (daur ulang, kompos, pengepul, dll.)
+- ☁️ **Penyimpanan Otomatis ke Cloudinary** — Setiap prediksi dibackup secara *asynchronous* tanpa memblokir *response* API
+- 🤖 **Deteksi GPU Otomatis** — YOLOv8 menggunakan GPU (CUDA) bila tersedia; *fallback* ke CPU secara otomatis
+- ✅ **Validasi File Server-Side** — Tipe dan ukuran file divalidasi di backend (bukan hanya di JavaScript)
+- ⚡ **Frontend Modern** — React 19 + TypeScript + Vite: UI responsif, komponen modular, dan performa tinggi
 
 ---
 
-# 🗂 Kategori Sampah
+## 🚀 Live Demo
 
-Kedua model menggunakan **5 kelas yang sama**:
+> Aplikasi sudah berjalan penuh di lingkungan produksi. Tidak diperlukan instalasi lokal untuk mencoba fitur utama.
 
-| Kategori | Emoji | Warna UI | Penanganan |
-|----------|-------|----------|------------|
-| Kaca | 🪟 | Ungu `#8b5cf6` | Pisahkan khusus, bungkus pecahan dengan kertas tebal |
-| Kertas | 📄 | Kuning `#f59e0b` | Daur ulang / kompos (jika terkena minyak) |
-| Logam | ⚙️ | Hijau `#22c55e` | Jual ke pengepul atau bank sampah |
-| Organik | 🌿 | Lime `#84cc16` | Kompos |
-| Plastik | ♻️ | Cyan `#06b6d4` | Daur ulang, cuci sebelum dibuang |
+| Layanan | URL |
+|---------|-----|
+| 🌐 **Frontend (Vercel)** | [https://smart-waste-ai-eta.vercel.app](https://smart-waste-ai-eta.vercel.app) |
+| ⚙️ **Backend API (Hugging Face)** | [https://fathiarasy-smartwaste.hf.space](https://fathiarasy-smartwaste.hf.space) |
+| 📊 **Status Model** | [https://fathiarasy-smartwaste.hf.space/api/status](https://fathiarasy-smartwaste.hf.space/api/status) |
 
 ---
 
-# 📊 Dataset
+## 🏗 Arsitektur Sistem
 
-## Dataset 1 — Klasifikasi Gambar (MobileNetV2)
-
-| Properti | Detail |
-|----------|--------|
-| Sumber | [Garbage Classification — Mostafa Abla (Kaggle)](https://www.kaggle.com/datasets/mostafaabla/garbage-classification) |
-| Kelas asli | 12 kelas (brown-glass, green-glass, white-glass, metal, battery, paper, cardboard, plastic, biological, clothes, shoes, trash) |
-| Kelas setelah remap | 5 kelas (Kaca, Kertas, Logam, Organik, Plastik) |
-| Format | Folder per kelas (image classification) |
-| Ukuran input | Di-resize ke 224×224 px saat preprocessing |
-| Script preprocessing | `train/prepare_dataset.py` |
-
-**Mapping kelas (12 → 5):**
-
-| Kelas Asli | → | Kelas SmartWaste |
-|------------|---|-----------------|
-| brown-glass, green-glass, white-glass, glass | → | Kaca |
-| metal, battery, tin | → | Logam |
-| paper, cardboard | → | Kertas |
-| plastic | → | Plastik |
-| biological, organic, food | → | Organik |
-| clothes, shoes, trash | → | *(dibuang / tidak digunakan)* |
-
-> ⚠️ Kelas `clothes`, `shoes`, dan `trash` **tidak disertakan** dalam training. Menyertakannya akan menghasilkan 6 kelas yang tidak cocok dengan `CLASS_NAMES_KERAS` di `backend/app.py` (silent bug).
-
----
-
-## Dataset 2 — Deteksi Objek (YOLOv8m)
-
-| Properti | Detail |
-|----------|--------|
-| Sumber | [Garbage Classification 3 — Roboflow Universe](https://universe.roboflow.com/material-identification/garbage-classification-3/dataset/2) |
-| Lisensi | CC BY 4.0 |
-| Jumlah gambar | 10.464 gambar |
-| Kelas asli | 6 kelas (BIODEGRADABLE, CARDBOARD, GLASS, METAL, PAPER, PLASTIC) |
-| Kelas setelah remap | 5 kelas (kaca, kertas, logam, organik, plastik) |
-| Format anotasi | YOLOv8 (YOLO .txt per gambar) |
-| Total anotasi dipakai | 74.090 bounding box |
-| Preprocessing (Roboflow) | Resize 416×416, auto-orientation, augmentasi flip & rotasi 90° |
-
-**Mapping kelas (6 → 5):**
-
-| Kelas Asli (Roboflow) | → | Kelas SmartWaste |
-|-----------------------|---|-----------------|
-| BIODEGRADABLE | → | organik |
-| CARDBOARD | → | kertas |
-| GLASS | → | kaca |
-| METAL | → | logam |
-| PAPER | → | kertas |
-| PLASTIC | → | plastik |
-| CLOTH | → | *(dibuang / tidak digunakan)* |
-
-> `CARDBOARD` dan `PAPER` digabung menjadi satu kelas `kertas`. Kelas `CLOTH` dibuang karena tidak relevan.
-
----
-
-# 🏗 Arsitektur Sistem
-
-Proyek ini menggunakan arsitektur **frontend-backend terpisah** (decoupled):
+Proyek ini menggunakan arsitektur **frontend-backend terpisah** (*decoupled architecture*) dengan tiga layanan utama yang saling berkomunikasi:
 
 ```
-Frontend (React + Vite, port 3000)
-  │
-  ├── /                      → Home Page
-  ├── /klasifikasi           → Upload gambar → POST /api/predict
-  │                              ├── MobileNetV2 inference (TF/Keras)
-  │                              ├── upload_to_drive_async() [background thread]
-  │                              └── append riwayat.jsonl
-  ├── /camera                → WebRTC stream → POST /api/camera-frame
-  │                              └── YOLOv8m inference (PyTorch/Ultralytics)
-  └── /about                 → About Page
-
-  ↕ HTTP (JSON / multipart) — via VITE_API_URL
-
-Backend (Flask, port 5000)
-  ├── POST /api/predict          ← multipart/form-data (gambar)
-  ├── POST /api/camera-frame     ← JSON {image: base64}
-  ├── GET  /api/status           ← status model
-  └── GET  /api/health           ← health check
+┌─────────────────────────────────────────────────────────────┐
+│                    PENGGUNA (Browser)                       │
+└────────────────────────┬────────────────────────────────────┘
+                         │ HTTPS
+┌────────────────────────▼────────────────────────────────────┐
+│           FRONTEND — Vercel (React + Vite)                  │
+│  ┌──────────┐ ┌─────────────┐ ┌──────────┐ ┌───────────┐   │
+│  │   Home   │ │ Klasifikasi │ │  Camera  │ │   About   │   │
+│  └──────────┘ └──────┬──────┘ └────┬─────┘ └───────────┘   │
+└─────────────────────-│─────────────│────────────────────────┘
+                        │ POST /api/predict   │ POST /api/camera-frame
+                        │ (multipart/form-data) │ (JSON base64)
+┌───────────────────────▼─────────────────────▼──────────────┐
+│         BACKEND — Hugging Face Spaces (Flask + Gunicorn)    │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  app.py — Flask REST API                               │ │
+│  │  ├── MobileNetV2 (TensorFlow/Keras) — Klasifikasi      │ │
+│  │  ├── YOLOv8m (Ultralytics/PyTorch) — Deteksi RT        │ │
+│  │  └── cloudinary_storage.py — Upload async              │ │
+│  └────────────────────────────────────────────────────────┘ │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ HTTPS (Cloudinary SDK)
+┌──────────────────────────────▼──────────────────────────────┐
+│               STORAGE — Cloudinary                          │
+│         (Penyimpanan gambar hasil prediksi)                 │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-Frontend berkomunikasi dengan backend melalui REST API. CORS diaktifkan di backend (`flask-cors`) agar request lintas origin dari frontend dev server dapat diterima.
+---
+
+## 💻 Tech Stack
+
+| Layer | Teknologi | Keterangan |
+|-------|-----------|------------|
+| **Frontend** | React 19, TypeScript 5.8, Vite 6 | UI web modern dengan komponen modular |
+| **Routing** | react-router-dom v7 | Navigasi SPA (Single-Page Application) |
+| **Backend** | Python 3.11, Flask 3.0, Gunicorn | REST API server produksi |
+| **CORS** | flask-cors | Mengizinkan request lintas-*origin* dari Vercel |
+| **AI — Klasifikasi** | TensorFlow 2.13+, Keras, MobileNetV2 | Model *image classification* 5 kelas |
+| **AI — Deteksi** | Ultralytics YOLOv8m, PyTorch | Model *object detection* real-time |
+| **Computer Vision** | OpenCV 4.8+ | Decode, resize, dan konversi frame kamera |
+| **Kamera** | WebRTC API (browser-native) | Streaming webcam tanpa plugin |
+| **Image Storage** | Cloudinary | Penyimpanan gambar hasil prediksi secara cloud |
+| **Deploy Frontend** | Vercel | Hosting static + edge functions |
+| **Deploy Backend** | Hugging Face Spaces (Docker SDK) | Container Docker dengan Gunicorn |
 
 ---
 
-# 💻 Tech Stack
-
-| Layer | Teknologi |
-|-------|-----------|
-| Frontend | React 19, TypeScript 5.8, Vite 6, react-router-dom v7 |
-| Backend | Python 3.11+, Flask 3.0, flask-cors |
-| AI — Klasifikasi | TensorFlow 2.13+, Keras, MobileNetV2 |
-| AI — Deteksi | PyTorch (CUDA 12.8 / CPU), Ultralytics YOLOv8m |
-| Computer Vision | OpenCV 4.8+ |
-| Kamera | WebRTC API (browser-native) |
-| Storage | Google Drive API v3 (OAuth 2.0) |
-| Deployment Frontend | Vercel |
-| Deployment Backend | Render / Railway (rekomendasi) |
-
----
-
-# 📁 Struktur Proyek
+## 📁 Struktur Direktori
 
 ```
 smartwaste_ai/
-├── frontend/                          # React + Vite frontend (TypeScript)
-│   ├── index.html                     # Entry HTML (Google Fonts, favicon)
-│   ├── package.json                   # Dependencies (react, react-router-dom, vite)
-│   ├── vite.config.ts                 # Vite config (port 3000)
-│   ├── tsconfig.json                  # TypeScript config
-│   ├── vercel.json                    # Vercel routing + API proxy
-│   ├── .env.example                   # Template env (VITE_API_URL)
+│
+├── 📄 Dockerfile                   # Konfigurasi Docker untuk deploy backend ke HF Spaces
+├── 📄 requirements.txt             # Python dependencies untuk lingkungan produksi (Docker/HF)
+├── 📄 .gitattributes               # Konfigurasi Git LFS (model .keras dan .pt > 100MB)
+├── 📄 .gitignore                   # File yang dikecualikan dari version control
+├── 📄 DEPLOY_NOTES.md              # Catatan teknis proses deployment
+├── 📄 LICENSE
+├── 📄 README.md
+│
+├── 📂 frontend/                    # ◀ UI React — di-deploy ke Vercel
+│   ├── index.html                  # Entry HTML (Google Fonts, favicon)
+│   ├── package.json                # Dependensi NPM (react, react-router-dom, vite)
+│   ├── vite.config.ts              # Konfigurasi Vite (port 3000, proxy)
+│   ├── tsconfig.json               # Konfigurasi TypeScript
+│   ├── vercel.json                 # Konfigurasi routing SPA untuk Vercel
+│   ├── .env.example                # Template variabel lingkungan frontend
 │   ├── public/
-│   │   └── images/                    # Aset gambar (logo institusi)
+│   │   └── images/                 # Logo institusi (FTE, laboratorium)
 │   └── src/
-│       ├── main.tsx                   # Entry point (ReactDOM, BrowserRouter)
-│       ├── App.tsx                    # Route definitions
+│       ├── main.tsx                # Entry point ReactDOM + BrowserRouter
+│       ├── App.tsx                 # Definisi route seluruh halaman
 │       ├── components/
-│       │   ├── layout/                # Navbar, Footer, Layout, BackgroundOrnaments
-│       │   ├── home/                  # StatsBar, FeaturesGrid, HowItWorks, WasteCategories
-│       │   └── klasifikasi/           # UploadPanel, ResultsPanel, TipsRow
+│       │   ├── layout/             # Navbar, Footer, Layout, BackgroundOrnaments
+│       │   ├── home/               # StatsBar, FeaturesGrid, HowItWorks, WasteCategories
+│       │   └── klasifikasi/        # UploadPanel, ResultsPanel, TipsRow
 │       ├── hooks/
-│       │   └── useCamera.ts           # WebRTC + real-time detection hook
+│       │   └── useCamera.ts        # Hook WebRTC + real-time detection
 │       ├── lib/
-│       │   ├── api.ts                 # API client (predict, cameraFrame, getStatus)
-│       │   ├── constants.ts           # CLASS_NAMES, COLORS, RECOMMENDATIONS
-│       │   └── icons.tsx              # EmojiToIcon, SVG icon components
+│       │   ├── api.ts              # API client (predictImage, sendCameraFrame, getStatus)
+│       │   ├── constants.ts        # CLASS_NAMES, COLORS, RECOMMENDATIONS
+│       │   └── icons.tsx           # Komponen ikon SVG
 │       ├── pages/
-│       │   ├── Home.tsx               # Home Page
-│       │   ├── Klasifikasi.tsx        # Classification Page
-│       │   ├── Camera.tsx             # Real-Time Camera Page
-│       │   └── About.tsx              # About Page
+│       │   ├── Home.tsx            # Halaman utama
+│       │   ├── Klasifikasi.tsx     # Halaman klasifikasi gambar
+│       │   ├── Camera.tsx          # Halaman deteksi real-time
+│       │   └── About.tsx           # Halaman tentang proyek & tim
 │       └── styles/
-│           └── globals.css            # Seluruh styling (ported dari static/css/style.css)
+│           └── globals.css         # Seluruh styling aplikasi (design system)
 │
-├── backend/                           # Flask backend (API only)
-│   ├── app.py                         # Flask app (routing, inference, log)
-│   ├── drive_storage.py               # Upload async ke Google Drive (background thread)
-│   ├── auth_setup.py                  # Generate token.json OAuth Google Drive
-│   ├── requirements.txt               # Dependencies GPU (CUDA 12.8)
-│   └── requirements-cpu.txt           # Dependencies CPU-only
+├── 📂 backend/                     # ◀ Flask REST API — di-deploy ke Hugging Face Spaces
+│   ├── app.py                      # Inti Flask app: routing, inferensi AI, log prediksi
+│   └── cloudinary_storage.py       # Upload gambar ke Cloudinary (background thread)
 │
-├── model/                             # Model AI (shared oleh backend)
+├── 📂 model/                       # ◀ Bobot model AI siap pakai (digunakan oleh backend)
 │   ├── classification/
-│   │   ├── smartwaste_mobilenetv2.keras   # MobileNetV2 (5 kelas)
-│   │   └── class_indices.json             # Mapping index → nama kelas Keras
+│   │   ├── smartwaste_mobilenetv2.keras   # Model MobileNetV2 — 5 kelas (Git LFS)
+│   │   └── class_indices.json             # Pemetaan indeks → nama kelas Keras
 │   └── yolo/
-│       ├── smartwaste_yolo.pt             # YOLOv8m (5 kelas, hasil remap)
+│       ├── smartwaste_yolo.pt             # Model YOLOv8m — 5 kelas (Git LFS)
 │       ├── data.yaml                      # Konfigurasi dataset YOLO
 │       ├── dataset.txt                    # Ringkasan mapping & statistik dataset
 │       ├── README.dataset.txt             # Dokumentasi dataset asli (Roboflow)
-│       └── README.roboflow.txt            # Info ekspor Roboflow
+│       └── README.roboflow.txt            # Info ekspor format Roboflow
 │
-├── train/                             # Script training model
-│   ├── prepare_dataset.py             # Preprocessing & remap dataset Kaggle (12 → 5)
-│   ├── train_keras.py                 # Training MobileNetV2 (2 tahap)
-│   ├── train_yolo.py                  # Training YOLOv8m (100 epoch, resume support)
-│   ├── evaluate_keras.py              # Evaluasi model Keras (classification report)
-│   └── cek_model.py                   # Verifikasi model (cek path & kelas)
+├── 📂 train/                       # ◀ Skrip pelatihan model (tidak dipakai di produksi)
+│   ├── prepare_dataset.py          # Preprocessing & remap dataset Kaggle (12 kelas → 5)
+│   ├── train_keras.py              # Training MobileNetV2 (2 tahap: head + fine-tune)
+│   ├── train_yolo.py               # Training YOLOv8m (100 epoch, support resume)
+│   ├── evaluate_keras.py           # Evaluasi model Keras (classification report)
+│   └── cek_model.py                # Verifikasi path dan kelas model
 │
-├── reports/                           # Laporan & grafik pelatihan
+├── 📂 reports/                     # ◀ Grafik & laporan hasil pelatihan
 │   ├── mobilenet/
 │   │   ├── confusion_matrix.png
 │   │   └── training_history.png
@@ -304,201 +231,195 @@ smartwaste_ai/
 │       ├── confusion_matrix_normalized_20260619_1412.png
 │       └── training_history_20260619_1412.png
 │
-├── riwayat.jsonl                      # Log riwayat prediksi + link Drive (auto-generated)
-├── credentials.json                   # OAuth client secret Google (⚠️ jangan commit)
-├── token.json                         # OAuth token Google Drive (⚠️ jangan commit)
-├── LICENSE
-└── README.md
+└── 📂 docs/                        # ◀ Aset dokumentasi (screenshot, diagram)
+    └── assets/
+        ├── space_main.png
+        └── ...
 ```
 
-> **Catatan:** Folder `static/`, `templates/`, `app.py`, `drive_storage.py`, `auth_setup.py`, `requirements*.txt` di root adalah **legacy code** sebelum migrasi ke arsitektur terpisah dan dapat dihapus atau diabaikan.
+> **📌 Catatan untuk Penguji:** Folder `frontend/` berisi seluruh kode UI yang berjalan di Vercel. Folder `backend/` berisi Flask API yang berjalan di Hugging Face. Folder `model/` berisi file bobot AI yang dibaca langsung oleh backend saat container Docker dijalankan. Folder `train/` hanya digunakan saat proses pelatihan ulang model dari awal.
 
 ---
 
-# ⚙️ Instalasi
+## 🧠 Model Artificial Intelligence
 
-## Prasyarat
+### MobileNetV2 — Klasifikasi Gambar
+
+| Properti | Detail |
+|----------|--------|
+| Arsitektur | MobileNetV2 (*Transfer Learning* dari ImageNet) |
+| Framework | TensorFlow 2.13+ / Keras |
+| Input | 224 × 224 px, 3 channel (RGB) |
+| Output | 5 kelas (softmax) |
+| File model | `model/classification/smartwaste_mobilenetv2.keras` |
+| Strategi Training | 2 tahap: (1) Head training 15 epoch dengan base *frozen*, (2) Fine-tune 40 layer teratas 20 epoch |
+| Augmentasi | Rotasi, flip horizontal, zoom, *brightness shift*, shear |
+
+### YOLOv8m — Deteksi Real-Time
+
+| Properti | Detail |
+|----------|--------|
+| Arsitektur | YOLOv8 Medium (`yolov8m.pt`) |
+| Framework | Ultralytics / PyTorch |
+| Input | 640 × 640 px |
+| Output | 5 kelas + *bounding box* + *confidence score* |
+| File model | `model/yolo/smartwaste_yolo.pt` |
+| Training | 100 epoch di Google Colab (GPU Tesla T4), *best checkpoint* epoch 77 |
+| Batch size | 16 (turunkan ke 8 atau 4 jika VRAM < 6 GB) |
+
+---
+
+## 🗂 Kategori Sampah
+
+Kedua model AI menggunakan **5 kelas yang identik**:
+
+| Kategori | Emoji | Warna UI | Panduan Pengelolaan |
+|----------|-------|----------|---------------------|
+| **Kaca** | 🪟 | `#8b5cf6` (Ungu) | Pisahkan khusus; bungkus pecahan dengan kertas tebal sebelum dibuang |
+| **Kertas** | 📄 | `#f59e0b` (Kuning) | Daur ulang; jika terkena minyak/basah, jadikan kompos |
+| **Logam** | ⚙️ | `#22c55e` (Hijau) | Jual ke pengepul atau serahkan ke bank sampah |
+| **Organik** | 🌿 | `#84cc16` (Lime) | Jadikan kompos atau pupuk organik |
+| **Plastik** | ♻️ | `#06b6d4` (Cyan) | Pisahkan, cuci, dan kirim ke tempat daur ulang |
+
+---
+
+## 📊 Dataset
+
+### Dataset 1 — Klasifikasi Gambar (MobileNetV2)
+
+| Properti | Detail |
+|----------|--------|
+| Sumber | [Garbage Classification — Mostafa Abla (Kaggle)](https://www.kaggle.com/datasets/mostafaabla/garbage-classification) |
+| Jumlah gambar | ~15.870 gambar berlabel |
+| Kelas asli | 12 kelas (brown-glass, green-glass, metal, paper, plastic, dll.) |
+| Kelas setelah remap | 5 kelas (Kaca, Kertas, Logam, Organik, Plastik) |
+| Kelas yang dibuang | `clothes`, `shoes`, `trash` — tidak relevan untuk konteks pengelolaan sampah umum |
+| Skrip preprocessing | `train/prepare_dataset.py` |
+
+### Dataset 2 — Deteksi Objek (YOLOv8m)
+
+| Properti | Detail |
+|----------|--------|
+| Sumber | [Garbage Classification 3 — Roboflow Universe](https://universe.roboflow.com/material-identification/garbage-classification-3/dataset/2) |
+| Lisensi | CC BY 4.0 |
+| Jumlah gambar | 10.464 gambar |
+| Total anotasi | 74.090 *bounding box* |
+| Kelas asli | 6 kelas (BIODEGRADABLE, CARDBOARD, GLASS, METAL, PAPER, PLASTIC) |
+| Kelas setelah remap | 5 kelas — `CARDBOARD` + `PAPER` digabung menjadi `kertas`; `CLOTH` dibuang |
+| Format anotasi | YOLO `.txt` per gambar |
+| Preprocessing | Resize 416×416, auto-orientation, augmentasi flip & rotasi |
+
+---
+
+## 📈 Hasil Pelatihan Model
+
+### MobileNetV2 (Klasifikasi Gambar)
+
+| Metrik | Nilai |
+|--------|-------|
+| Training Accuracy | 90.02% |
+| Validation Accuracy | 93.53% |
+| Validation Loss | 0.3274 |
+
+> Grafik *training history* dan *confusion matrix* tersedia di `reports/mobilenet/`.
+
+### YOLOv8m (Deteksi Real-Time)
+
+*Best checkpoint* di epoch 77 dari total 100 epoch training.
+
+| Metrik | Nilai |
+|--------|-------|
+| mAP50 (semua kelas) | 0.654 |
+| mAP50-95 | 0.456 |
+| Precision | 0.752 |
+| Recall | 0.590 |
+
+**mAP50 per kelas:**
+
+| Kelas | Precision | Recall | mAP50 | mAP50-95 |
+|-------|-----------|--------|-------|----------|
+| Kaca | 0.904 | 0.712 | 0.822 | 0.616 |
+| Kertas | 0.739 | 0.548 | 0.635 | 0.486 |
+| Logam | 0.851 | 0.643 | 0.728 | 0.504 |
+| Organik | 0.815 | 0.496 | 0.629 | 0.357 |
+| Plastik | 0.451 | 0.551 | 0.454 | 0.314 |
+
+> Grafik *training history* dan *confusion matrix* tersedia di `reports/yolov8/`.
+
+---
+
+## ⚙️ Instalasi Lokal
+
+> **Catatan:** Untuk sekadar mencoba aplikasi, gunakan [Live Demo](#-live-demo) di atas. Instalasi lokal diperlukan hanya untuk pengembangan atau eksperimen lebih lanjut.
+
+### Prasyarat
 
 - Python 3.11+
-- Node.js 18+ (untuk frontend)
-- Git
-- (Opsional) GPU NVIDIA dengan CUDA 12.8 untuk performa YOLO optimal
-
-## Langkah Instalasi
+- Node.js 18+
+- Git + Git LFS (untuk mengunduh file model berukuran besar)
 
 ### 1. Clone Repository
 
 ```bash
 git clone https://github.com/arasyfathi/SmartWaste-AI.git
 cd SmartWaste-AI
+
+# Unduh file model via Git LFS
+git lfs pull
 ```
 
 ### 2. Setup Backend
 
 ```bash
 cd backend
-```
 
-```bash
-# 2a. Install dependencies — jika punya GPU NVIDIA RTX (CUDA 12.8)
-pip install -r requirements.txt
+# Install dependencies (CPU-only, cocok untuk pengembangan lokal)
+pip install -r ../requirements.txt
 
-# 2b. Install dependencies — CPU only (tanpa GPU NVIDIA)
-pip install -r requirements-cpu.txt
-```
-
-> ⚠️ `requirements.txt` menggunakan build PyTorch khusus `cu128` untuk NVIDIA Blackwell (RTX 5060+). Jika dijalankan di mesin lain, gunakan `requirements-cpu.txt`.
-
-```bash
-# Verifikasi CUDA (opsional, hanya jika install requirements.txt)
-python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
-# Output yang diharapkan: 2.11.0+cu128 True
-```
-
-```bash
-# Setup Google Drive OAuth (wajib, hanya sekali)
-# Letakkan credentials.json dari Google Cloud Console di folder backend/, lalu:
-python auth_setup.py
-# Browser akan terbuka untuk login Google → menghasilkan token.json di folder backend/
-```
-
-```bash
 # Jalankan backend
 python app.py
 ```
 
-Backend akan berjalan di:
+Backend akan berjalan di `http://localhost:7860`.
 
-```
-http://localhost:5000
-```
+> ⚠️ Pastikan file model ada di `model/classification/` dan `model/yolo/` sebelum menjalankan backend.
 
 ### 3. Setup Frontend
 
-Buka terminal baru (jangan tutup terminal backend):
+Buka terminal baru:
 
 ```bash
 cd frontend
 npm install
-```
 
-```bash
-# (Opsional) Buat file .env jika backend berjalan di URL berbeda
+# Salin template environment
 cp .env.example .env
-# Edit VITE_API_URL jika perlu (default: http://localhost:5000)
-```
+# Isi VITE_API_URL dengan http://localhost:7860 (atau URL HF Spaces untuk produksi)
 
-```bash
-# Jalankan frontend dev server
 npm run dev
 ```
 
-Frontend akan berjalan di:
-
-```
-http://localhost:3000
-```
+Frontend akan berjalan di `http://localhost:3000`.
 
 ---
 
-# 🧠 Training Model
+## 🔌 API Endpoints
 
-> Model sudah tersedia di folder `model/`. Bagian ini hanya diperlukan jika ingin melatih ulang dari awal.
-
-## A. MobileNetV2 — Klasifikasi Gambar
-
-**1. Download Dataset dari Kaggle:**
-
-- Dataset: [Garbage Classification — Mostafa Abla](https://www.kaggle.com/datasets/mostafaabla/garbage-classification)
-- Ekstrak ke folder `datasets/raw/`
-
-**2. Preprocessing & remap kelas (12 → 5):**
-
-```bash
-python train/prepare_dataset.py --src datasets/raw --dst datasets/garbage
-```
-
-Script ini melakukan resize gambar ke 224×224 px, memetakan 12 kelas asli ke 5 kelas SmartWaste AI, dan membuang kelas yang tidak relevan (`clothes`, `shoes`, `trash`).
-
-**3. Training (2 tahap):**
-
-```bash
-python train/train_keras.py
-```
-
-- **Tahap 1** (15 epoch): Training head baru dengan base frozen
-- **Tahap 2** (20 epoch): Fine-tune top 40 layers dengan learning rate rendah (5e-6)
-
-Output: `model/classification/smartwaste_mobilenetv2.keras` dan `model/classification/class_indices.json`
-
----
-
-## B. YOLOv8m — Deteksi Real-Time
-
-**1. Download Dataset dari Roboflow:**
-
-- Dataset: [Garbage Classification 3 — v2 GC1](https://universe.roboflow.com/material-identification/garbage-classification-3/dataset/2)
-- Format: YOLOv8, ekspor ke `datasets/garbage-classification-3/`
-
-**2. Remap kelas (6 → 5) dan buat `data.yaml`:**
-
-Setelah remap, `data.yaml` berisi:
-
-```yaml
-nc: 5
-names: ['kaca', 'kertas', 'logam', 'organik', 'plastik']
-train: datasets/dataset_remapped/train/images
-val:   datasets/dataset_remapped/valid/images
-test:  datasets/dataset_remapped/test/images
-```
-
-Detail mapping lengkap ada di `model/yolo/dataset.txt`.
-
-**3. Training (YOLOv8m, 100 epoch):**
-
-```bash
-python train/train_yolo.py
-```
-
-Training dilakukan di Google Colab (GPU Tesla T4). Checkpoint disimpan setiap 10 epoch (`save_period=10`) sebagai antisipasi putus koneksi.
-
-Output: `model/yolo/smartwaste_yolo.pt` (di-copy dari `runs/detect/smartwaste_yolov8m/weights/best.pt`)
-
----
-
-# 🚀 Cara Penggunaan
-
-## Klasifikasi Gambar
-
-1. Buka halaman **Klasifikasi** (`/klasifikasi`) di frontend
-2. Upload foto sampah (JPG, PNG, WebP, maks 10MB)
-3. Klik **Prediksi**
-4. Lihat hasil: kategori, confidence score per kelas, dan rekomendasi pengelolaan
-
-## Deteksi Real-Time
-
-1. Buka halaman **Camera** (`/camera`) di frontend
-2. Izinkan akses webcam di browser
-3. Arahkan kamera ke objek sampah
-4. Sistem mendeteksi secara real-time dengan bounding box, label, dan confidence score
-
----
-
-# 🔌 API Endpoints
-
-Semua endpoint berada di **backend** (`http://localhost:5000`). Frontend mengaksesnya melalui API client di `frontend/src/lib/api.ts`.
+Semua endpoint tersedia di backend (`https://fathiarasy-smartwaste.hf.space`).
 
 | Method | Endpoint | Deskripsi |
 |--------|----------|-----------|
-| POST | `/api/predict` | Prediksi gambar (multipart/form-data) |
-| POST | `/api/camera-frame` | Deteksi satu frame (JSON base64) |
-| GET | `/api/status` | Status model yang dimuat |
-| GET | `/api/health` | Health check backend |
+| `GET` | `/` | Status backend & info endpoint |
+| `POST` | `/api/predict` | Prediksi gambar (multipart/form-data) |
+| `POST` | `/api/camera-frame` | Deteksi satu frame kamera (JSON base64) |
+| `GET` | `/api/status` | Status model yang dimuat (Keras & YOLO) |
+| `GET` | `/api/health` | *Health check* sederhana |
+| `GET` | `/api/debug-files` | Debug lokasi file model di server |
 
-### Contoh: POST `/api/predict`
+### Contoh: `POST /api/predict`
 
 ```bash
-curl -X POST http://localhost:5000/api/predict \
+curl -X POST https://fathiarasy-smartwaste.hf.space/api/predict \
   -F "image=@foto_sampah.jpg"
 ```
 
@@ -520,140 +441,59 @@ Response:
     "icon": "♻️",
     "color": "#06b6d4",
     "action": "Daur Ulang",
-    "tips": [
-      "Pisahkan ke tempat sampah daur ulang plastik (biasanya berwarna kuning).",
-      "Cuci dan keringkan sebelum dibuang agar tidak terkontaminasi.",
-      "..."
-    ]
-  }
+    "tips": ["Pisahkan ke tempat sampah daur ulang plastik.", "..."]
+  },
+  "model_used": "MobileNetV2"
 }
 ```
 
-### Contoh: POST `/api/camera-frame`
+---
+
+## 🚢 Deployment Produksi
+
+### Frontend → Vercel
+
+File `frontend/vercel.json` sudah dikonfigurasi untuk routing SPA. Deploy otomatis terpicu setiap `git push` ke branch `main`.
 
 ```bash
-curl -X POST http://localhost:5000/api/camera-frame \
-  -H "Content-Type: application/json" \
-  -d '{"image": "<base64-encoded-frame>"}'
-```
-
----
-
-# ☁️ Integrasi Google Drive (Riwayat Prediksi)
-
-Setiap kali endpoint `/api/predict` dipanggil, gambar yang diupload otomatis dikirim ke Google Drive melalui `backend/drive_storage.py`. Proses ini berjalan di **background thread** agar tidak menunda response API. Hasilnya (`prediction`, `confidence`, link Drive) dicatat sebagai satu baris JSON di `riwayat.jsonl`.
-
-**Setup OAuth (sekali saja, sebelum pertama kali jalan):**
-
-```bash
-cd backend
-python auth_setup.py
-```
-
-Script ini membuka browser untuk login Google, lalu menghasilkan `token.json` yang dipakai otomatis oleh `drive_storage.py` (termasuk auto-refresh token).
-
-**Yang diperlukan:**
-
-- `credentials.json` (OAuth client secret dari Google Cloud Console) — letakkan di folder `backend/`
-- (Opsional) Environment variable `DRIVE_FOLDER_ID` untuk menentukan folder tujuan upload
-
-> ⚠️ `credentials.json` dan `token.json` berisi kredensial sensitif — sudah masuk `.gitignore`, **jangan pernah commit** ke repository publik.
-
----
-
-# 📈 Hasil Pelatihan Model
-
-## MobileNetV2 (Klasifikasi Gambar)
-
-| Metrik | Nilai |
-|--------|-------|
-| Training Accuracy | 90.02% |
-| Validation Accuracy | 93.53% |
-| Validation Loss | 0.3274 |
-
-> Grafik training history dan confusion matrix tersedia di `reports/mobilenet/`.
-
----
-
-## YOLOv8m (Deteksi Real-Time)
-
-Training 100 epoch di Google Colab (GPU Tesla T4), best checkpoint di epoch 77.
-
-**Metrik keseluruhan:**
-
-| Metrik | Nilai |
-|--------|-------|
-| mAP50 (semua kelas) | 0.654 |
-| mAP50-95 | 0.456 |
-| Precision | 0.752 |
-| Recall | 0.590 |
-
-**mAP50 per kelas:**
-
-| Kelas | Precision | Recall | mAP50 | mAP50-95 |
-|-------|-----------|--------|-------|----------|
-| Kaca | 0.904 | 0.712 | 0.822 | 0.616 |
-| Kertas | 0.739 | 0.548 | 0.635 | 0.486 |
-| Logam | 0.851 | 0.643 | 0.728 | 0.504 |
-| Organik | 0.815 | 0.496 | 0.629 | 0.357 |
-| Plastik | 0.451 | 0.551 | 0.454 | 0.314 |
-
-> **Catatan:**
-> - Kelas **Plastik** memiliki performa terendah, kemungkinan akibat class imbalance (jumlah instance jauh lebih sedikit dari kelas lain).
-> - Kelas **Organik** cukup sering tertukar dengan background pada confusion matrix, kemungkinan akibat dominasi jumlah instance Organik di dataset.
-> - Grafik training history dan confusion matrix (raw & normalized) tersedia di `reports/yolov8/`.
-
----
-
-# 🚢 Deploy
-
-## Frontend → Vercel
-
-Frontend React dapat di-deploy langsung ke Vercel:
-
-```bash
+# Build manual (opsional, Vercel membangun otomatis)
 cd frontend
-npm run build        # Output ke frontend/dist/
+npm run build
 ```
 
-File `frontend/vercel.json` sudah dikonfigurasi untuk:
-- Routing SPA (fallback ke `index.html` untuk react-router-dom)
-- API proxy dari `/api/*` ke backend
+### Backend → Hugging Face Spaces (Docker)
 
-Setelah deploy, update URL proxy di `vercel.json` agar mengarah ke URL backend produksi (bukan `localhost:5000`).
+`Dockerfile` di root proyek mendefinisikan container untuk Hugging Face Spaces. Deploy otomatis terpicu setiap `git push hf main`.
 
-## Backend → Render / Railway
-
-Backend Flask perlu di-deploy ke platform yang mendukung Python + TensorFlow/YOLO:
-
-```bash
-# Build command:
-pip install -r requirements-cpu.txt
-
-# Start command:
-gunicorn app:app
+```dockerfile
+# Gunicorn digunakan sebagai WSGI server produksi
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "1", "--threads", "4", "backend.app:app"]
 ```
 
-> Tambahkan `gunicorn` ke `requirements.txt` jika belum ada.
+**Environment Secrets** yang wajib diset di Hugging Face Space Settings:
 
-Render/Railway akan memberikan URL publik (`https://nama-app.onrender.com`). Gunakan URL ini sebagai nilai `VITE_API_URL` di environment variable Vercel frontend, dan juga update `vercel.json` proxy destination.
+| Secret Key | Keterangan |
+|------------|------------|
+| `CLOUDINARY_CLOUD_NAME` | Cloud name akun Cloudinary |
+| `CLOUDINARY_API_KEY` | API Key Cloudinary |
+| `CLOUDINARY_API_SECRET` | API Secret Cloudinary |
 
 ---
 
-# 👨‍💻 Tim Pengembang
+## 👨‍💻 Tim Pengembang
+
+**Fakultas Teknik Elektro — Telkom University, Tahun Akademik 2026**
 
 | Nama | NIM | Peran |
 |------|-----|-------|
-| **Fathi Arasy** | 101022400103 | Machine Learning & Backend Developer |
+| **Fathi Arasy** | 101022400103 | Backend & Frontend Developer |
 | **Adelia Afriliani** | 101052300002 | UI/UX Designer & Frontend Developer |
 | **Ghalib Hafuza** | 10012400211 | Computer Vision & Model Development |
 
-**Telkom University — Tahun Akademik 2026**
-
 ---
 
-# 📜 Lisensi
+## 📜 Lisensi
 
-Proyek ini dikembangkan untuk keperluan akademik sebagai bagian dari Proyek IMV di Telkom University.
+Proyek ini dikembangkan untuk keperluan akademik sebagai bagian dari Proyek Akhir Mata Kuliah IMV di Telkom University.
 
-© 2026 SmartWaste AI Team
+© 2026 SmartWaste AI Team — Telkom University
