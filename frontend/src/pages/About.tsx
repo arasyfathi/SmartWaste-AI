@@ -75,9 +75,9 @@ export function AboutPage() {
               { val: 'MobileNetV2', key: 'KLASIFIKASI' },
               { val: 'YOLOv8m', key: 'DETEKSI RT' },
               { val: 'Auto-Resize', key: 'PRE-PROCESSING' },
-              { val: '< 50ms', key: 'INFERENCE SPEED' },
-              { val: 'Ringan', key: 'MODEL SIZE' },
-              { val: '5 Kelas', key: 'OUTPUT' },
+              { val: 'Optimized for Speed', key: 'REAL-TIME PROCESS' },
+              { val: 'Edge-Ready Design', key: 'EDGE-OPTIMIZED' },
+              { val: '5 Object Classes', key: 'CLASSIFICATION OUT' },
             ].map((item) => (
               <div key={item.key} className="model-box">
                 <div className="model-val">{item.val}</div>
@@ -94,12 +94,18 @@ export function AboutPage() {
         <h2 className="team-title">Mahasiswa Telkom University</h2>
         <div className="team-grid">
           {[
-            { initials: 'GH', name: 'Ghalib Hafuza', nim: '10012400211', role: 'Train Model' },
-            { initials: 'FA', name: 'Fathi Arasy', nim: '101022400103', role: 'Frontend & Backend Dev' },
-            { initials: 'AA', name: 'Adelia Afriliani', nim: '101052300002', role: 'Web, UI/UX Design' },
+            { photo: '/images/ghalib.jpeg', name: 'Ghalib Hafuza', nim: '10012400211', role: 'Train Model' },
+            { photo: '/images/fathi.jpeg', name: 'Fathi Arasy', nim: '101022400103', role: 'Frontend & Backend Dev' },
+            { photo: '/images/adel.jpeg', name: 'Adelia Afriliani', nim: '101052300002', role: 'Web, UI/UX Design' },
           ].map((member) => (
-            <div key={member.initials} className="team-card">
-              <div className="avatar">{member.initials}</div>
+            <div key={member.name} className="team-card">
+              <div className="avatar-photo-wrap">
+                <img
+                  src={member.photo}
+                  alt={member.name}
+                  className="avatar-photo"
+                />
+              </div>
               <div className="member-name">{member.name}</div>
               <div className="member-nim">{member.nim}</div>
               <span className="role-badge">{member.role}</span>
