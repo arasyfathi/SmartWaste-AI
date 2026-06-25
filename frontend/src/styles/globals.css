@@ -1345,33 +1345,33 @@ main { padding-top: var(--navbar-h); }
 .confidence-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 14px;           /* jarak vertikal lebih lega antar baris */
+  margin-bottom: 22px;
 }
 
 .conf-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 90px 1fr 48px; /* label | bar | persen — sejajar sempurna */
   align-items: center;
-  gap: 10px;
-  font-size: 12.5px;
+  gap: 0 12px;
+  font-size: 13px;
 }
 
 .conf-row-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  width: 90px;
-  flex-shrink: 0;
+  gap: 7px;
   color: var(--text);
   font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.conf-row-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.conf-row-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
 .conf-bar-track {
-  flex: 1;
-  height: 6px;
-  background: var(--sage-50);
+  height: 8px;             /* lebih tebal dari sebelumnya (6px) */
+  background: var(--sage-100);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -1383,15 +1383,15 @@ main { padding-top: var(--navbar-h); }
 }
 
 .conf-row-val {
-  width: 48px;
   text-align: right;
   color: var(--muted);
   font-weight: 600;
-  flex-shrink: 0;
+  font-size: 12.5px;
+  font-family: var(--font);
 }
 
 .rec-box {
-  padding: 18px;
+  padding: 20px 24px;      /* padding lebih lapang */
   background: var(--sage-50);
   border: 1px solid var(--sage-200);
   border-radius: var(--radius-sm);
@@ -1402,14 +1402,14 @@ main { padding-top: var(--navbar-h); }
   font-weight: 600;
   letter-spacing: .12em;
   color: var(--leaf-dark);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-family: var(--font);
 }
 
 .rec-text {
   font-size: 13.5px;
   color: var(--text);
-  line-height: 1.7;
+  line-height: 1.85;       /* leading-loose agar lebih mudah dibaca */
 }
 
 /* Tips row */
