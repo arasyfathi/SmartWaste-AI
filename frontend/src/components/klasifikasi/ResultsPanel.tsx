@@ -68,7 +68,7 @@ function ResultsContent({ data }: { data: PredictResponse }) {
   const meta = getMeta(prediction);
 
   return (
-    <div>
+    <div className="results-body">
       <div className="result-top">
         <span className="result-icon" style={{ color: meta.color }}>
           <ClassIcon name={meta.icon} />

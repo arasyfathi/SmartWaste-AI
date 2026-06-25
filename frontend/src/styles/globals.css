@@ -1290,6 +1290,11 @@ main { padding-top: var(--navbar-h); }
 
 #results-content { padding: 20px; }
 
+/* Wrapper seluruh konten hasil analisis — memberikan breathing room p-6 dari tepi card */
+.results-body {
+  padding: 20px 24px 24px;
+}
+
 .result-top {
   display: flex;
   align-items: center;
@@ -1391,7 +1396,7 @@ main { padding-top: var(--navbar-h); }
 }
 
 .rec-box {
-  padding: 20px 24px;      /* padding lebih lapang */
+  padding: 22px 26px;      /* p-5 ~ p-6: teks aman dari garis pinggir kotak */
   background: var(--sage-50);
   border: 1px solid var(--sage-200);
   border-radius: var(--radius-sm);
