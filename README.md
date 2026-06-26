@@ -159,85 +159,26 @@ Proyek ini menggunakan arsitektur **frontend-backend terpisah** (*decoupled arch
 
 ## 📁 Struktur Direktori
 
-```
-smartwaste_ai/
-│
-├── 📄 Dockerfile                   # Konfigurasi Docker untuk deploy backend ke HF Spaces
-├── 📄 requirements.txt             # Python dependencies untuk lingkungan produksi (Docker/HF)
-├── 📄 .gitattributes               # Konfigurasi Git LFS (model .keras dan .pt > 100MB)
-├── 📄 .gitignore                   # File yang dikecualikan dari version control
-├── 📄 DEPLOY_NOTES.md              # Catatan teknis proses deployment
-├── 📄 LICENSE
-├── 📄 README.md
-│
-├── 📂 frontend/                    # ◀ UI React — di-deploy ke Vercel
-│   ├── index.html                  # Entry HTML (Google Fonts, favicon)
-│   ├── package.json                # Dependensi NPM (react, react-router-dom, vite)
-│   ├── vite.config.ts              # Konfigurasi Vite (port 3000, proxy)
-│   ├── tsconfig.json               # Konfigurasi TypeScript
-│   ├── vercel.json                 # Konfigurasi routing SPA untuk Vercel
-│   ├── .env.example                # Template variabel lingkungan frontend
-│   ├── public/
-│   │   └── images/                 # Logo institusi (FTE, laboratorium)
-│   └── src/
-│       ├── main.tsx                # Entry point ReactDOM + BrowserRouter
-│       ├── App.tsx                 # Definisi route seluruh halaman
-│       ├── components/
-│       │   ├── layout/             # Navbar, Footer, Layout, BackgroundOrnaments
-│       │   ├── home/               # StatsBar, FeaturesGrid, HowItWorks, WasteCategories
-│       │   └── klasifikasi/        # UploadPanel, ResultsPanel, TipsRow
-│       ├── hooks/
-│       │   └── useCamera.ts        # Hook WebRTC + real-time detection
-│       ├── lib/
-│       │   ├── api.ts              # API client (predictImage, sendCameraFrame, getStatus)
-│       │   ├── constants.ts        # CLASS_NAMES, COLORS, RECOMMENDATIONS
-│       │   └── icons.tsx           # Komponen ikon SVG
-│       ├── pages/
-│       │   ├── Home.tsx            # Halaman utama
-│       │   ├── Klasifikasi.tsx     # Halaman klasifikasi gambar
-│       │   ├── Camera.tsx          # Halaman deteksi real-time
-│       │   └── About.tsx           # Halaman tentang proyek & tim
-│       └── styles/
-│           └── globals.css         # Seluruh styling aplikasi (design system)
-│
-├── 📂 backend/                     # ◀ Flask REST API — di-deploy ke Hugging Face Spaces
-│   ├── app.py                      # Inti Flask app: routing, inferensi AI, log prediksi
-│   └── cloudinary_storage.py       # Upload gambar ke Cloudinary (background thread)
-│
-├── 📂 model/                       # ◀ Bobot model AI siap pakai (digunakan oleh backend)
-│   ├── classification/
-│   │   ├── smartwaste_mobilenetv2.keras   # Model MobileNetV2 — 5 kelas (Git LFS)
-│   │   └── class_indices.json             # Pemetaan indeks → nama kelas Keras
-│   └── yolo/
-│       ├── smartwaste_yolo.pt             # Model YOLOv8m — 5 kelas (Git LFS)
-│       ├── data.yaml                      # Konfigurasi dataset YOLO
-│       ├── dataset.txt                    # Ringkasan mapping & statistik dataset
-│       ├── README.dataset.txt             # Dokumentasi dataset asli (Roboflow)
-│       └── README.roboflow.txt            # Info ekspor format Roboflow
-│
-├── 📂 train/                       # ◀ Skrip pelatihan model (tidak dipakai di produksi)
-│   ├── prepare_dataset.py          # Preprocessing & remap dataset Kaggle (12 kelas → 5)
-│   ├── train_keras.py              # Training MobileNetV2 (2 tahap: head + fine-tune)
-│   ├── train_yolo.py               # Training YOLOv8m (100 epoch, support resume)
-│   ├── evaluate_keras.py           # Evaluasi model Keras (classification report)
-│   └── cek_model.py                # Verifikasi path dan kelas model
-│
-├── 📂 reports/                     # ◀ Grafik & laporan hasil pelatihan
-│   ├── mobilenet/
-│   │   ├── confusion_matrix.png
-│   │   └── training_history.png
-│   └── yolov8/
-│       ├── confusion_matrix_20260619_1412.png
-│       ├── confusion_matrix_normalized_20260619_1412.png
-│       └── training_history_20260619_1412.png
-│
-└── 📂 docs/                        # ◀ Aset dokumentasi (screenshot, diagram)
-    └── assets/
-        ├── space_main.png
-        └── ...
-```
+### 📁 Struktur Folder Utama (Direktori)
 
-> **📌 Catatan untuk Penguji:** Folder `frontend/` berisi seluruh kode UI yang berjalan di Vercel. Folder `backend/` berisi Flask API yang berjalan di Hugging Face. Folder `model/` berisi file bobot AI yang dibaca langsung oleh backend saat container Docker dijalankan. Folder `train/` hanya digunakan saat proses pelatihan ulang model dari awal.
+- `backend/` : Berisi source code untuk server API (Python/Flask). Bertugas menerima permintaan dari frontend, memproses gambar ke model AI, dan mengembalikan hasil klasifikasi.
+- `docs/assets/` : Folder untuk menyimpan aset statis seperti gambar screenshot, logo, atau diagram arsitektur.
+- `frontend/` : Berisi source code antarmuka pengguna (UI/UX) berbasis web yang dibangun menggunakan React/Vite dan Tailwind CSS.
+- `model/` : Tempat menyimpan file bobot (weights) model AI yang sudah siap pakai, seperti model YOLOv8m atau MobileNetV2.
+- `reports/` : Folder untuk menyimpan grafik hasil evaluasi, confusion matrix, atau metrik performa AI.
+- `train/` : Berisi skrip Python atau Jupyter Notebook yang digunakan untuk melatih (training) model AI.
+
+### 📄 File Konfigurasi & Root
+
+- `.env.example` : Template kerangka environment variables (seperti API Key Cloudinary) tanpa nilai asli agar aman.
+- `.gitattributes` : File pengaturan Git (termasuk Git LFS) untuk menangani file model AI yang ukurannya besar.
+- `.gitignore` : Daftar aturan file/folder yang tidak boleh di-upload ke GitHub (seperti node_modules).
+- `DEPLOY_NOTES.md` : Catatan teknis (SOP) cara deployment ke Vercel dan Hugging Face.
+- `Dockerfile` : Skrip instruksi untuk membangun container virtual di server cloud.
+- `LICENSE` : Dokumen lisensi hukum proyek.
+- `README.md` : Dokumentasi utama proyek.
+- `requirements.txt` : Daftar library Python (Flask, TensorFlow, dll) yang wajib di-instal untuk menjalankan backend.
+- `test_hf.ps1` : Skrip utilitas pengujian lokal sebelum deploy ke Hugging Face.
 
 ---
 
