@@ -685,6 +685,25 @@ def camera_frame():
                         if (x2 - x1) < 20 or (y2 - y1) < 20:
                             # buang bbox terlalu kecil (noise)
                             continue
+                        
+                        # ─── FILTER TAMBAHAN: ANTI FALSE POSITIVE ───
+                        bw = x2 - x1
+                        bh = y2 - y1
+                        
+                        # 1. Filter Rasio Aspek (Menyaring objek terlalu vertikal seperti manusia/tiang)
+                        aspect_ratio = bh / bw if bw > 0 else 0
+                        if aspect_ratio > 2.5:
+                            continue
+                            
+                        # 2. Filter Kepadatan Tepi OpenCV (Menyaring dinding/lantai polos)
+                        roi = frame[y1:y2, x1:x2]
+                        if roi.size > 0:
+                            roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+                            edges = cv2.Canny(roi_gray, 50, 150)
+                            edge_density = np.sum(edges > 0) / (bw * bh)
+                            if edge_density < 0.01: # Jika area tekstur tepi kurang dari 1%
+                                continue
+                        # ─────────────────────────────────────────────
                         # mapping id kelas → nama Indonesia
                         label = YOLO_CLASS_MAP.get(cls_id, f'Kelas {cls_id}')
                         # ambil track_id jika tracking aktif
