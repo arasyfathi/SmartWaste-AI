@@ -159,26 +159,46 @@ Proyek ini menggunakan arsitektur **frontend-backend terpisah** (*decoupled arch
 
 ## 📁 Struktur Direktori
 
-### 📁 Struktur Folder Utama (Direktori)
-
-- `backend/` : Berisi source code untuk server API (Python/Flask). Bertugas menerima permintaan dari frontend, memproses gambar ke model AI, dan mengembalikan hasil klasifikasi.
-- `docs/assets/` : Folder untuk menyimpan aset statis seperti gambar screenshot, logo, atau diagram arsitektur.
-- `frontend/` : Berisi source code antarmuka pengguna (UI/UX) berbasis web yang dibangun menggunakan React/Vite dan Tailwind CSS.
-- `model/` : Tempat menyimpan file bobot (weights) model AI yang sudah siap pakai, seperti model YOLOv8m atau MobileNetV2.
-- `reports/` : Folder untuk menyimpan grafik hasil evaluasi, confusion matrix, atau metrik performa AI.
-- `train/` : Berisi skrip Python atau Jupyter Notebook yang digunakan untuk melatih (training) model AI.
-
-### 📄 File Konfigurasi & Root
-
-- `.env.example` : Template kerangka environment variables (seperti API Key Cloudinary) tanpa nilai asli agar aman.
-- `.gitattributes` : File pengaturan Git (termasuk Git LFS) untuk menangani file model AI yang ukurannya besar.
-- `.gitignore` : Daftar aturan file/folder yang tidak boleh di-upload ke GitHub (seperti node_modules).
-- `DEPLOY_NOTES.md` : Catatan teknis (SOP) cara deployment ke Vercel dan Hugging Face.
-- `Dockerfile` : Skrip instruksi untuk membangun container virtual di server cloud.
-- `LICENSE` : Dokumen lisensi hukum proyek.
-- `README.md` : Dokumentasi utama proyek.
-- `requirements.txt` : Daftar library Python (Flask, TensorFlow, dll) yang wajib di-instal untuk menjalankan backend.
-- `test_hf.ps1` : Skrip utilitas pengujian lokal sebelum deploy ke Hugging Face.
+```text
+📦 SmartWaste-AI
+├── 📂 backend/               # Server API (Python/Flask) dan logika pemrosesan AI
+├── 📂 docs/assets/           # Penyimpanan aset statis, gambar, atau dokumentasi
+├── 📂 frontend/              # Aplikasi antarmuka web (React + Vite)
+│   ├── 📂 public/images/     # Aset gambar publik yang dapat diakses langsung
+│   ├── 📂 src/               # Source code utama untuk frontend
+│   │   ├── 📂 components/    # Komponen UI (home, klasifikasi, layout, dll)
+│   │   ├── 📂 hooks/         # Custom React hooks untuk logika komponen
+│   │   ├── 📂 lib/           # Fungsi utilitas atau library eksternal
+│   │   ├── 📂 pages/         # Komponen halaman utama aplikasi 
+│   │   ├── 📂 styles/        # File CSS global (termasuk globals.css Tailwind)
+│   │   ├── 📄 App.tsx        # Komponen root aplikasi dan routing
+│   │   ├── 📄 main.tsx       # Entry point utama React
+│   │   └── 📄 vite-env.d.ts  # Deklarasi tipe untuk environment Vite
+│   ├── 📄 .env.example       # Contoh variabel environment untuk frontend
+│   ├── 📄 .gitignore         # File yang diabaikan Git di sisi frontend
+│   ├── 📄 index.html         # Template HTML utama
+│   ├── 📄 package.json       # Daftar dependensi dan script NPM frontend
+│   ├── 📄 package-lock.json  # Kunci versi dependensi NPM secara spesifik
+│   ├── 📄 tsconfig.*         # Konfigurasi TypeScript untuk frontend
+│   ├── 📄 vercel.json        # Konfigurasi deployment khusus Vercel
+│   └── 📄 vite.config.ts     # Konfigurasi bundler Vite
+├── 📂 model/                 # Tempat penyimpanan model AI yang sudah dilatih
+│   ├── 📂 classification/    # File model untuk klasifikasi 5 jenis sampah
+│   └── 📂 yolo/              # File model untuk deteksi objek (YOLOv8)
+├── 📂 reports/               # Hasil evaluasi dan laporan performa model AI
+│   ├── 📂 mobilenet/         # Metrik performa untuk model klasifikasi
+│   └── 📂 yolov8/            # Metrik performa untuk model deteksi
+├── 📂 train/                 # Skrip atau notebook untuk proses training model AI
+├── 📄 .env.example           # Contoh variabel environment level root (backend/AI)
+├── 📄 .gitattributes         # Konfigurasi atribut Git (misal untuk Git LFS)
+├── 📄 .gitignore             # File/folder yang diabaikan Git di level root
+├── 📄 DEPLOY_NOTES.md        # Catatan dan panduan deployment (Vercel & HF)
+├── 📄 Dockerfile             # Konfigurasi container untuk deployment backend
+├── 📄 LICENSE                # Lisensi proyek
+├── 📄 README.md              # Dokumentasi utama proyek ini
+├── 📄 requirements.txt       # Daftar dependensi Python untuk backend
+└── 📄 test_hf.ps1            # Skrip testing deployment ke Hugging Face (PowerShell)
+```
 
 ---
 
