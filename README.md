@@ -1,14 +1,3 @@
----
-title: SmartWaste AI
-emoji: ♻️
-colorFrom: green
-colorTo: blue
-sdk: docker
-pinned: false
----
-
-<div align="center">
-
 # ♻️ SmartWaste AI
 
 **Sistem Deteksi dan Klasifikasi Sampah Real-Time Berbasis Artificial Intelligence**
